@@ -2,7 +2,7 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>解答之書</title>
     <style>
         * {
@@ -23,13 +23,16 @@
             padding: 20px;
         }
 
-        /* 3D 場景容器（僅在電腦版生效） */
+        /* 3D 場景容器（電腦版尺寸） */
         .scene {
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             height: 75vh;
             max-height: 650px;
             perspective: 2000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         /* 書本主體 */
@@ -71,11 +74,11 @@
             height: 100%;
             background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 100%);
             border-left: 15px solid #000;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 12px 12px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 35px;
+            padding: 30px;
             box-shadow: 15px 10px 35px rgba(0,0,0,0.6);
             backface-visibility: hidden;
         }
@@ -87,35 +90,41 @@
             height: 100%;
             background: #111111;
             border-right: 15px solid #000;
-            border-radius: 8px 0 0 8px;
+            border-radius: 12px 0 0 12px;
             transform: rotateY(180deg);
             backface-visibility: hidden;
             box-shadow: -15px 10px 35px rgba(0,0,0,0.6);
             background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
         }
 
-        /* 燙金設計 */
+        /* 燙金核心設計：採用完美垂直分配，避免花紋被擠壓 */
         .gold-pattern {
-            width: 92%;
-            height: 94%;
+            width: 100%;
+            height: 100%;
             border: 4px double #d4af37;
-            border-radius: 4px;
+            border-radius: 6px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            position: relative;
+            padding: 40px 20px;
             box-shadow: inset 0 0 25px rgba(212,175,55,0.15);
         }
 
-        .gold-pattern::before, .gold-pattern::after {
-            content: "❖";
+        .diamond-icon {
             color: #d4af37;
-            font-size: 2rem;
-            position: absolute;
+            font-size: 1.8rem;
             text-shadow: 0 0 6px rgba(212,175,55,0.6);
+            user-select: none;
         }
-        .gold-pattern::before { top: 25px; }
-        .gold-pattern::after { bottom: 25px; }
+
+        .book-title-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+        }
 
         .book-title {
             color: #d4af37;
@@ -126,10 +135,18 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(212,175,55,0.4);
         }
 
+        .book-subtitle {
+            font-size: 1rem; 
+            color: #b8972f; 
+            letter-spacing: 2px;
+            margin-top: 10px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+        }
+
         /* ==================== 2. 底層留白內頁 ==================== */
         .inner-page-stay {
             background-color: #fbf9f1;
-            border-radius: 0 5px 5px 0;
+            border-radius: 0 8px 8px 0;
             z-index: 5;
             transform: rotateY(0deg);
             display: flex;
@@ -162,7 +179,7 @@
         /* ==================== 3. 封底 ==================== */
         .cover-back {
             background: #0d0d0d;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 12px 12px 0;
             z-index: 1;
         }
 
@@ -171,55 +188,63 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 終極手機版安全佈局 (螢幕寬度小於 600px) ==================== */
+        /* ==================== 4. 終極手機版防變形佈局 (螢幕寬度小於 600px) ==================== */
         @media (max-width: 600px) {
-            body {
-                padding: 15px;
-            }
-            /* 1. 放棄 3D 的高度限制，改用單純的百分比寬度與固定寬高比 */
             .scene {
+                width: 85vw !important; /* 控制手機版寬度不貼邊 */
+                max-width: 360px !important;
                 height: auto !important;
                 max-height: none !important;
-                aspect-ratio: 3 / 4; /* 強制書本維持完美的 3:4 比例，不隨螢幕亂拉伸 */
+                aspect-ratio: 9 / 16 !important; /* 強制重現極具質感的修長黃金比例 */
             }
+            
             .book {
                 transform: none !important;
                 transition: none !important;
             }
-            /* 2. 手機版不使用重疊，改用常規流動佈局，寬高填滿 */
+
             .page-component {
                 position: relative !important;
                 width: 100% !important;
                 height: 100% !important;
                 transform: none !important;
             }
-            /* 3. 預設隱藏內頁，由 JS 切換顯示 */
-            .inner-page-stay {
-                display: none; 
-                border-radius: 8px !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
-                background-image: none !important; /* 手機版不留書脊陰影 */
-                padding: 20px !important;
-            }
+
             .cover-front {
                 position: relative !important;
-                border-radius: 8px !important;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
-                padding: 20px !important;
+                border-radius: 12px !important;
+                border-left: none !important; /* 手機版採平面化，不留單邊厚書脊 */
+                box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
+                padding: 25px !important;
             }
-            /* 手機版不顯示這些沒必要的 3D 元件，降低破綻 */
+
+            .gold-pattern {
+                padding: 30px 15px !important;
+            }
+
+            .book-title {
+                font-size: 2.2rem !important;
+                letter-spacing: 6px !important;
+            }
+
+            .book-subtitle {
+                font-size: 0.85rem !important;
+            }
+
+            .inner-page-stay {
+                display: none; 
+                border-radius: 12px !important;
+                box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
+                background-image: none !important; 
+                padding: 30px !important;
+            }
+
+            .answer-text {
+                font-size: 1.6rem !important;
+            }
+
             .cover-back-side, .cover-back {
                 display: none !important;
-            }
-            /* 字體與裝飾縮放 */
-            .book-title {
-                font-size: 2rem !important;
-                letter-spacing: 5px !important;
-            }
-            .gold-pattern::before { top: 15px !important; }
-            .gold-pattern::after { bottom: 15px !important; }
-            .answer-text {
-                font-size: 1.5rem !important;
             }
         }
     </style>
@@ -232,7 +257,12 @@
             <div class="page-component cover-wrapper" id="frontCover">
                 <div class="cover-front">
                     <div class="gold-pattern">
-                        <div class="book-title">解答之書<br><small style="font-size: 1rem; color:#b8972f; letter-spacing: 2px;">THE BOOK OF ANSWERS</small></div>
+                        <div class="diamond-icon">❖</div>
+                        <div class="book-title-area">
+                            <div class="book-title">解答之書</div>
+                            <div class="book-subtitle">THE BOOK OF ANSWERS</div>
+                        </div>
+                        <div class="diamond-icon">❖</div>
                     </div>
                 </div>
                 <div class="cover-back-side"></div>
@@ -269,7 +299,6 @@
             const innerPage = document.getElementById('innerPage');
             const answerBox = document.getElementById('answerBox');
 
-            // 偵測目前是不是手機版面
             const isMobile = window.innerWidth <= 600;
 
             if (truths.length === 0) {
@@ -277,20 +306,16 @@
             }
 
             if (!isOpen) {
-                // 1. 抽籤隨機解答
                 if (truths.length > 0) {
                     const randomIndex = Math.floor(Math.random() * truths.length);
                     answerBox.textContent = truths[randomIndex];
                 }
 
-                // 2. 開啟邏輯
                 if (isMobile) {
-                    // 手機版：直接隱藏封面，顯示內頁
                     frontCover.style.display = 'none';
                     innerPage.style.display = 'flex';
                     answerBox.classList.add('show-text');
                 } else {
-                    // 電腦版：使用精美的 3D 動畫
                     book.classList.add('open-book');
                     frontCover.classList.add('flipped');
                     setTimeout(() => {
@@ -300,14 +325,11 @@
 
                 isOpen = true;
             } else {
-                // 3. 關閉邏輯
                 if (isMobile) {
-                    // 手機版：直接隱藏內頁，顯示封面
                     answerBox.classList.remove('show-text');
                     innerPage.style.display = 'none';
                     frontCover.style.display = 'block';
                 } else {
-                    // 電腦版：還原 3D 狀態
                     answerBox.classList.remove('show-text');
                     setTimeout(() => {
                         frontCover.classList.remove('flipped');
@@ -319,7 +341,6 @@
             }
         }
 
-        // 初始化載入 JSON
         loadAnswers();
     </script>
 </body>
