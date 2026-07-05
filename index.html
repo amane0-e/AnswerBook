@@ -23,14 +23,15 @@
             padding: 20px;
         }
 
-        /* 3D 場景容器：全面改為由 4/5 比例驅動 */
+        /* 3D 場景容器 */
         .scene {
             width: 100%;
-            max-width: 440px; /* 電腦版最大寬度 */
+            /* 【核心修改】放大電腦版最大寬度與高度限制，讓 4:5 的寬厚感完全釋放 */
+            max-width: 520px; 
             height: auto;
-            max-height: 550px; /* 電腦版最大高度限制，確保高度縮減 */
+            max-height: 650px; 
             
-            /* 【核心修改】電腦版也強制鎖定在 4:5 的經典扎實書本比例 */
+            /* 強制鎖定在 4:5 的經典扎實書本比例 */
             aspect-ratio: 4 / 5; 
             
             perspective: 2000px;
@@ -77,12 +78,12 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 100%);
-            border-left: 15px solid #000;
+            border-left: 18px solid #000; /* 稍微加厚書脊，更有份量 */
             border-radius: 0 12px 12px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 30px;
+            padding: 35px;
             box-shadow: 15px 10px 35px rgba(0,0,0,0.6);
             backface-visibility: hidden;
         }
@@ -93,7 +94,7 @@
             width: 100%;
             height: 100%;
             background: #111111;
-            border-right: 15px solid #000;
+            border-right: 18px solid #000;
             border-radius: 12px 0 0 12px;
             transform: rotateY(180deg);
             backface-visibility: hidden;
@@ -111,13 +112,13 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 35px 20px; /* 因高度減短，同步微調內邊距 */
+            padding: 40px 25px; 
             box-shadow: inset 0 0 25px rgba(212,175,55,0.15);
         }
 
         .diamond-icon {
             color: #d4af37;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             text-shadow: 0 0 6px rgba(212,175,55,0.6);
             user-select: none;
         }
@@ -132,7 +133,7 @@
 
         .book-title {
             color: #d4af37;
-            font-size: 2.6rem; /* 配合 4:5 稍矮的比例微調大小 */
+            font-size: 2.8rem; 
             letter-spacing: 8px;
             text-align: center;
             line-height: 1.6;
@@ -140,10 +141,10 @@
         }
 
         .book-subtitle {
-            font-size: 0.95rem; 
+            font-size: 1.05rem; 
             color: #b8972f; 
             letter-spacing: 2px;
-            margin-top: 8px;
+            margin-top: 10px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
@@ -156,7 +157,7 @@
             display: flex;
             justify-content: center;
             align-items: center; 
-            padding: 40px;
+            padding: 45px;
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
         }
@@ -164,7 +165,7 @@
         /* 答案文字樣式 */
         .answer-text {
             color: #5a4b32;
-            font-size: 2rem;
+            font-size: 2.2rem; /* 電腦版字體稍微放大 */
             line-height: 1.6;
             letter-spacing: 2px;
             text-align: center;
@@ -200,7 +201,7 @@
                 height: auto !important;
                 max-height: 65dvh !important; 
                 
-                /* 手機版同步鎖定在 4:5 比例 */
+                /* 手機版同樣維持 4:5 比例 */
                 aspect-ratio: 4 / 5 !important; 
                 
                 margin: 0 !important; 
