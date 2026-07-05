@@ -105,7 +105,7 @@
             background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
         }
 
-        /* 【核心修改】古典花框：精確移除了四個角落類似問號的圈圈與線條 path */
+        /* 古典花框 */
         .gold-pattern {
             width: 100%;
             height: 100%;
@@ -166,6 +166,7 @@
         }
 
         /* ==================== 2. 底層留白內頁 ==================== */
+        /* 【核心新增】內頁加上古典細緻的雙線邊框，呈現精裝書開頁感 */
         .inner-page-stay {
             background-color: #fbf9f1;
             width: calc(100% - 2px);
@@ -176,10 +177,26 @@
             display: flex;
             justify-content: center;
             align-items: center; 
-            padding: 80px; 
+            padding: 35px; /* 縮小一點點外襯，讓內邊框有空間 */
             overflow: hidden; 
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        /* 內頁古典細邊框設計 */
+        .inner-page-stay::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            bottom: 25px;
+            left: 25px;
+            right: 25px;
+            border: 1px solid rgba(59, 49, 33, 0.25);
+            outline: 3px double rgba(59, 49, 33, 0.4);
+            outline-offset: -8px;
+            border-radius: 4px;
+            pointer-events: none;
         }
 
         /* 雙語答案容器 */
@@ -188,11 +205,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            max-width: 90%;
-            gap: 25px; 
+            max-width: 80%;
+            gap: 20px; 
             opacity: 0;
             transition: opacity 0.4s ease-in-out;
             user-select: none;
+            z-index: 6;
         }
 
         /* 英文在上 */
@@ -204,6 +222,35 @@
             text-align: center;
             font-weight: 400;
             text-transform: uppercase; 
+        }
+
+        /* 【核心新增】具備設計感的中英對稱幾何分隔線 */
+        .decor-line {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 140px;
+            height: 20px;
+            color: rgba(59, 49, 33, 0.6);
+            position: relative;
+        }
+        
+        .decor-line::before, .decor-line::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(to var(--direction, right), rgba(59, 49, 33, 0.5), rgba(59, 49, 33, 0));
+        }
+        .decor-line::before { --direction: left; margin-right: 10px; }
+        .decor-line::after { --direction: right; margin-left: 10px; }
+
+        .decor-diamond {
+            font-size: 0.6rem;
+            transform: rotate(45deg);
+            width: 8px;
+            height: 8px;
+            border: 1px solid #3b3121;
+            background-color: #3b3121;
         }
 
         /* 中文在下 */
@@ -295,10 +342,19 @@
                 border-radius: 12px !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
-                padding: 40px !important; 
+                padding: 30px !important; 
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
+            }
+
+            /* 手機版內頁邊框微調縮小 */
+            .inner-page-stay::before {
+                top: 15px;
+                bottom: 15px;
+                left: 15px;
+                right: 15px;
+                outline-offset: -5px;
             }
             
             .inner-page-stay.mobile-active {
@@ -308,11 +364,17 @@
             }
 
             .answer-container {
-                gap: 15px !important;
+                max-width: 85% !important;
+                gap: 12px !important;
             }
 
             .eng-text {
                 font-size: 1.05rem !important;
+            }
+
+            .decor-line {
+                width: 100px !important;
+                height: 14px !important;
             }
 
             .ch-text {
@@ -347,6 +409,11 @@
             <div class="page-component inner-page-stay" id="innerPage">
                 <div class="answer-container" id="answerBox">
                     <div class="eng-text" id="engText"></div>
+                    
+                    <div class="decor-line">
+                        <div class="decor-diamond"></div>
+                    </div>
+                    
                     <div class="ch-text" id="chText">載入中...</div>
                 </div>
             </div>
