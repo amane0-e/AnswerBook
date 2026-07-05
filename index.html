@@ -13,7 +13,6 @@
 
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
-            /* 使用 Grid 佈局提供極致精準的雙軸絕對置中 */
             display: grid;
             place-items: center;
             width: 100vw;
@@ -25,12 +24,9 @@
 
         /* 3D 場景容器 */
         .scene {
-            /* 【修正1】電腦版直接鎖定大尺寸像素，徹底擺脫比例縮小的問題 */
             width: 600px; 
             height: 750px; 
-            /* 剛好是 4:5 的扎實書籍比例 */
             aspect-ratio: 4 / 5; 
-            
             perspective: 2500px; 
             display: flex;
             justify-content: center;
@@ -47,7 +43,7 @@
             cursor: pointer;
         }
 
-        /* 【電腦版專屬】打開時書本右移置中 */
+        /* 打開時書本右移置中 */
         .book.open-book {
             transform: translateX(50%);
         }
@@ -64,7 +60,6 @@
 
         /* ==================== 1. 雙面複合封面外殼 ==================== */
         .cover-wrapper {
-            /* 【修正2】擴大外殼範圍（上下左右各外推 3px），如同真實精裝書殼，完美遮蓋底下白邊 */
             width: calc(100% + 6px);
             height: calc(100% + 6px);
             top: -3px;
@@ -80,7 +75,7 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 100%);
-            border-left: 22px solid #000; /* 加厚書脊 */
+            border-left: 22px solid #000; 
             border-radius: 0 16px 16px 0;
             display: flex;
             justify-content: center;
@@ -90,7 +85,7 @@
             backface-visibility: hidden;
         }
 
-        /* 封面背面（電腦版翻開後呈現在左側的皮質內襯） */
+        /* 封面背面（翻開後呈現在左側的皮質內襯） */
         .cover-back-side {
             position: absolute;
             width: 100%;
@@ -153,14 +148,17 @@
         /* ==================== 2. 底層留白內頁 ==================== */
         .inner-page-stay {
             background-color: #fbf9f1;
-            border-radius: 0 12px 12px 0;
+            /* 讓內頁右縮 2px 並微調半徑，根除死角漏白問題 */
+            width: calc(100% - 2px);
+            margin-left: 2px;
+            border-radius: 0 14px 14px 0;
             z-index: 5;
             transform: rotateY(0deg);
             display: flex;
             justify-content: center;
             align-items: center; 
             padding: 60px;
-            overflow: hidden; /* 防止內頁元素邊緣反光或溢出白邊 */
+            overflow: hidden; 
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
         }
@@ -191,15 +189,14 @@
             z-index: 1;
         }
 
-        /* 【電腦版專屬】翻開狀態動畫 */
+        /* 翻開狀態動畫 */
         .flipped {
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 手機版專屬優化佈局 (螢幕寬度小於 600px) ==================== */
+        /* ==================== 4. 手機版專屬優化佈局 ==================== */
         @media (max-width: 600px) {
             .scene {
-                /* 手機版還原為適合手持的響應式大小 */
                 width: 88vw !important; 
                 max-width: 380px !important; 
                 height: auto !important;
@@ -235,10 +232,10 @@
                 border-radius: 12px !important;
                 border-left: none !important; 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
-                padding: 0 !important; /* 清空原本的 padding，改用內部規格控寬 */
+                padding: 0 !important; 
             }
 
-            /* 【修正3】強制限制燙金框在手機版只佔 80% 寬、86% 高，讓外圍留下極寬的精緻皮革邊緣 */
+            /* 手機版燙金比例收縮留白 */
             .gold-pattern {
                 width: 80% !important;
                 height: 86% !important;
@@ -263,6 +260,8 @@
             }
 
             .inner-page-stay {
+                width: 100% !important;
+                margin-left: 0 !important;
                 border-radius: 12px !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
@@ -333,6 +332,7 @@
             }
         }
 
+        // 核心開關邏輯
         async function toggleBook() {
             const book = document.getElementById('magicBook');
             const frontCover = document.getElementById('frontCover');
@@ -378,6 +378,14 @@
                 isOpen = false;
             }
         }
+
+        // 【新增】監聽鍵盤事件：按下空白鍵觸發翻頁
+        window.addEventListener('keydown', function(e) {
+            if (e.code === 'Space' || e.keyCode === 32) {
+                e.preventDefault(); // 防止按空白鍵時網頁往下捲動
+                toggleBook();
+            }
+        });
 
         loadAnswers();
     </script>
