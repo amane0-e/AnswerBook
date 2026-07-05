@@ -13,12 +13,12 @@
 
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            /* 改用 Grid 佈局，這能提供比 Flexbox 更強制、更精準的雙軸絕對置中 */
+            display: grid;
+            place-items: center;
             width: 100vw;
-            height: 100dvh; /* 使用 dvh 確保完美適配手機瀏覽器工具列，絕不偏移 */
-            font-family: 'Noto Serif TC', serif;
+            height: 100vh;
+            height: 100dvh; 
             overflow: hidden;
         }
 
@@ -150,7 +150,7 @@
             transform: rotateY(0deg);
             display: flex;
             justify-content: center;
-            align-items: center; /* 內頁文字垂直置中 */
+            align-items: center; 
             padding: 40px;
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
@@ -187,15 +187,20 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 終極手機版防跑版置中佈局 (螢幕寬度小於 600px) ==================== */
+        /* ==================== 4. 手機版優化佈局 (螢幕寬度小於 600px) ==================== */
         @media (max-width: 600px) {
             .scene {
-                width: 82vw !important; /* 精準控制寬度 */
+                width: 82vw !important; 
                 max-width: 340px !important;
-                height: auto !important;
-                max-height: none !important;
-                aspect-ratio: 9 / 16 !important; /* 鎖定比例，防止文字被壓扁 */
-                margin: 0 auto; /* 水平居中雙重保險 */
+                /* 限制最大高度不能超過手機可用垂直空間的 75%，防止被工具列擠向下方 */
+                height: 75dvh !important;
+                max-height: 600px !important;
+                aspect-ratio: 9 / 16 !important; 
+                
+                /* 強制清除任何可能導致偏移的 margin，完全交由 body 的 grid 置中 */
+                margin: 0 !important; 
+                position: relative !important;
+                top: 0 !important;
             }
             
             .book {
@@ -204,23 +209,23 @@
             }
 
             .page-component {
-                position: relative !important;
+                position: absolute !important; /* 手機版改回絕對定位重疊，確保容器高度計算精準 */
                 width: 100% !important;
                 height: 100% !important;
                 transform: none !important;
+                top: 0 !important;
+                left: 0 !important;
             }
 
             .cover-front {
-                position: relative !important;
                 border-radius: 12px !important;
                 border-left: none !important; 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
                 padding: 25px !important;
-                display: flex !important; /* 確保封面在手機上也正確使用 flex 佈局 */
             }
 
             .gold-pattern {
-                padding: 30px 15px !important;
+                padding: 35px 15px !important;
             }
 
             .book-title {
@@ -233,19 +238,29 @@
             }
 
             .inner-page-stay {
-                display: none; 
                 border-radius: 12px !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
                 padding: 30px !important;
-                justify-content: center !important;
-                align-items: center !important; /* 再次確保手機版答案絕對垂直置中 */
+                
+                /* 透過 opacity 控制顯示隱藏，不使用 display: none，避免高度重新計算造成閃爍或位移 */
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
+            }
+            
+            /* 手機版內頁啟動狀態 */
+            .inner-page-stay.mobile-active {
+                opacity: 1;
+                pointer-events: auto;
+                z-index: 12; /* 浮到最上層擋住封面 */
             }
 
             .answer-text {
                 font-size: 1.6rem !important;
             }
 
+            /* 手機版完全隱藏 3D 封底相關元件 */
             .cover-back-side, .cover-back {
                 display: none !important;
             }
@@ -315,8 +330,8 @@
                 }
 
                 if (isMobile) {
-                    frontCover.style.display = 'none';
-                    innerPage.style.display = 'flex';
+                    // 手機版：透過 class 控制不透明度，不改 display 以確保絕對置中
+                    innerPage.classList.add('mobile-active');
                     answerBox.classList.add('show-text');
                 } else {
                     book.classList.add('open-book');
@@ -330,8 +345,7 @@
             } else {
                 if (isMobile) {
                     answerBox.classList.remove('show-text');
-                    innerPage.style.display = 'none';
-                    frontCover.style.display = 'flex'; // 還原為 flex 確保置中不跑版
+                    innerPage.classList.remove('mobile-active');
                 } else {
                     answerBox.classList.remove('show-text');
                     setTimeout(() => {
