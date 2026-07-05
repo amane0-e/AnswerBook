@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>解答之書</title>
-    <!-- 【關鍵引入】線上載入專為書籍排版設計的思源宋體 (Noto Serif TC) -->
+    <!-- 線上載入專為書籍排版設計的思源宋體 (Noto Serif TC) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -26,8 +26,6 @@
             overflow: hidden;
             padding: 20px;
             outline: none; 
-            
-            /* 全站預設字體 */
             font-family: 'Noto Serif TC', serif;
         }
 
@@ -149,7 +147,7 @@
         }
 
         .book-subtitle {
-            font-family: -apple-system, BlinkMacSystemFont, sans-serif; /* 英文副標維持無襯線比較現代 */
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 1.3rem; 
             color: #b8972f; 
             letter-spacing: 3px;
@@ -168,27 +166,44 @@
             display: flex;
             justify-content: center;
             align-items: center; 
-            padding: 80px; /* 加大內邊距讓字體被壓在中央，四周留白增加 */
+            padding: 80px; 
             overflow: hidden; 
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
         }
 
-        /* 答案文字樣式 */
-        .answer-text {
-            /* 【核心修正】強制使用古典質感的思源宋體，並大幅縮減字級 */
-            font-family: 'Noto Serif TC', serif;
-            color: #423625; /* 稍微加深一點點，讓宋體的筆畫細節更清晰 */
-            font-size: 1rem; /* 大幅縮小，產生高雅的法式精裝書留白感 */
-            line-height: 1.8; 
-            letter-spacing: 3px; 
-            text-align: center;
-            font-weight: 600; /* 宋體加粗後粗細對比極美 */
+        /* 雙語答案容器 */
+        .answer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            max-width: 90%;
+            gap: 25px; /* 中英文之間的間距 */
             opacity: 0;
             transition: opacity 0.4s ease-in-out;
-            max-width: 90%;
             user-select: none;
-            word-break: break-all;
+        }
+
+        /* 英文在上樣式 */
+        .eng-text {
+            color: #7d705a; 
+            font-size: 1.25rem; 
+            line-height: 1.6;
+            letter-spacing: 2px;
+            text-align: center;
+            font-weight: 400;
+            text-transform: uppercase; 
+        }
+
+        /* 中文在下樣式 */
+        .ch-text {
+            color: #3b3121; 
+            font-size: 1.15rem; 
+            line-height: 1.8;
+            letter-spacing: 4px; 
+            text-align: center;
+            font-weight: 600;
         }
 
         .show-text {
@@ -277,7 +292,7 @@
                 border-radius: 12px !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
-                padding: 40px !important; /* 加大留白 */
+                padding: 40px !important; 
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
@@ -289,10 +304,17 @@
                 z-index: 12; 
             }
 
-            .answer-text {
-                /* 【修正】手機版內文也同步精緻縮小 */
-                font-size: 1.15rem !important;
-                line-height: 1.7 !important;
+            .answer-container {
+                gap: 15px !important;
+            }
+
+            .eng-text {
+                font-size: 1.05rem !important;
+            }
+
+            .ch-text {
+                font-size: 0.95rem !important;
+                letter-spacing: 3px !important;
             }
 
             .cover-back-side, .cover-back {
@@ -321,9 +343,12 @@
                 <div class="cover-back-side"></div>
             </div>
 
-            <!-- 【2. 空白內頁】 -->
+            <!-- 【2. 空白內頁（含中英對照容器）】 -->
             <div class="page-component inner-page-stay" id="innerPage">
-                <div class="answer-text" id="answerBox">載入中...</div>
+                <div class="answer-container" id="answerBox">
+                    <div class="eng-text" id="engText">Loading...</div>
+                    <div class="ch-text" id="chText">載入中...</div>
+                </div>
             </div>
 
             <!-- 【3. 封底】 -->
@@ -334,17 +359,37 @@
 
     <script>
         let isOpen = false;
-        let truths = [];
+        let chTruths = [];
+        let engTruths = [];
+        const targetIndex = 278; // 鎖定第 278 個答案
 
-        async function loadAnswers() {
+        // 【修正】同時讀取外部資料夾的 truth.json 與 EngTruth.json
+        async function loadAllAnswers() {
             try {
-                const response = await fetch('truth.json');
-                const data = await response.json();
-                truths = data.truth;
-                document.getElementById('answerBox').textContent = "";
+                // 平行發送兩個 fetch 請求，提升讀取效率
+                const [chRes, engRes] = await Promise.all([
+                    fetch('truth.json'),
+                    fetch('EngTruth.json')
+                ]);
+                
+                const chData = await chRes.json();
+                const engData = await engRes.json();
+                
+                chTruths = chData.truth;
+                engTruths = engData.truth;
+
+                // 預先填入第 278 個答案
+                if (chTruths[targetIndex] && engTruths[targetIndex]) {
+                    document.getElementById('engText').textContent = engTruths[targetIndex];
+                    document.getElementById('chText').textContent = chTruths[targetIndex];
+                } else {
+                    document.getElementById('engText').textContent = "ERROR";
+                    document.getElementById('chText').textContent = "指定索引超出資料庫範圍";
+                }
             } catch (error) {
-                console.error("無法讀取 JSON 檔案：", error);
-                document.getElementById('answerBox').textContent = "未能讀取到答案庫";
+                console.error("讀取 JSON 檔案失敗：", error);
+                document.getElementById('engText').textContent = "ERROR";
+                document.getElementById('chText').textContent = "未能讀取到中英文答案庫";
             }
         }
 
@@ -356,16 +401,12 @@
 
             const isMobile = window.innerWidth <= 600;
 
-            if (truths.length === 0) {
-                await loadAnswers();
+            // 如果打開時資料還沒加載完，先加載
+            if (chTruths.length === 0 || engTruths.length === 0) {
+                await loadAllAnswers();
             }
 
             if (!isOpen) {
-                if (truths.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * truths.length);
-                    answerBox.textContent = truths[randomIndex];
-                }
-
                 if (isMobile) {
                     innerPage.classList.add('mobile-active');
                     answerBox.classList.add('show-text');
@@ -376,7 +417,6 @@
                         answerBox.classList.add('show-text');
                     }, 300);
                 }
-
                 isOpen = true;
             } else {
                 if (isMobile) {
@@ -389,11 +429,11 @@
                         book.classList.remove('open-book');
                     }, 100);
                 }
-
                 isOpen = false;
             }
         }
 
+        // 監聽鍵盤空白鍵
         window.addEventListener('keydown', function(e) {
             if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) {
                 e.preventDefault(); 
@@ -401,8 +441,9 @@
             }
         });
 
+        // 頁面初始化
         window.addEventListener('DOMContentLoaded', () => {
-            loadAnswers();
+            loadAllAnswers();
             document.body.focus();
         });
     </script>
