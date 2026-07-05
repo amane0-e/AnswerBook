@@ -13,13 +13,14 @@
 
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
-            /* 改用 Grid 佈局，這能提供比 Flexbox 更強制、更精準的雙軸絕對置中 */
+            /* 使用 Grid 佈局提供最強制、最精準的雙軸絕對置中 */
             display: grid;
             place-items: center;
             width: 100vw;
             height: 100vh;
             height: 100dvh; 
             overflow: hidden;
+            padding: 20px;
         }
 
         /* 3D 場景容器（電腦版尺寸） */
@@ -190,14 +191,14 @@
         /* ==================== 4. 手機版優化佈局 (螢幕寬度小於 600px) ==================== */
         @media (max-width: 600px) {
             .scene {
-                width: 82vw !important; 
-                max-width: 340px !important;
-                /* 限制最大高度不能超過手機可用垂直空間的 75%，防止被工具列擠向下方 */
-                height: 75dvh !important;
-                max-height: 600px !important;
-                aspect-ratio: 9 / 16 !important; 
+                width: 90vw !important; /* 加寬安全範圍，讓書本在手機上更飽滿 */
+                max-width: 400px !important; /* 提升最大寬度限制 */
+                height: auto !important;
+                max-height: 70dvh !important; /* 限制最高高度不超過可視範圍的 70%，避免被工具列往下推 */
                 
-                /* 強制清除任何可能導致偏移的 margin，完全交由 body 的 grid 置中 */
+                /* 【核心修改】改為 3/4 經典書籍比例，左右加寬，視覺分量更扎實 */
+                aspect-ratio: 3 / 4 !important; 
+                
                 margin: 0 !important; 
                 position: relative !important;
                 top: 0 !important;
@@ -209,7 +210,7 @@
             }
 
             .page-component {
-                position: absolute !important; /* 手機版改回絕對定位重疊，確保容器高度計算精準 */
+                position: absolute !important; 
                 width: 100% !important;
                 height: 100% !important;
                 transform: none !important;
@@ -225,16 +226,16 @@
             }
 
             .gold-pattern {
-                padding: 35px 15px !important;
+                padding: 35px 20px !important; /* 微調內襯邊距，讓左右燙金完美對稱 */
             }
 
             .book-title {
-                font-size: 2.2rem !important;
+                font-size: 2.4rem !important; /* 隨著書本變寬，字體稍微調大，更具美感 */
                 letter-spacing: 6px !important;
             }
 
             .book-subtitle {
-                font-size: 0.85rem !important;
+                font-size: 0.9rem !important;
             }
 
             .inner-page-stay {
@@ -243,24 +244,21 @@
                 background-image: none !important; 
                 padding: 30px !important;
                 
-                /* 透過 opacity 控制顯示隱藏，不使用 display: none，避免高度重新計算造成閃爍或位移 */
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
             }
             
-            /* 手機版內頁啟動狀態 */
             .inner-page-stay.mobile-active {
                 opacity: 1;
                 pointer-events: auto;
-                z-index: 12; /* 浮到最上層擋住封面 */
+                z-index: 12; 
             }
 
             .answer-text {
-                font-size: 1.6rem !important;
+                font-size: 1.7rem !important;
             }
 
-            /* 手機版完全隱藏 3D 封底相關元件 */
             .cover-back-side, .cover-back {
                 display: none !important;
             }
@@ -330,7 +328,6 @@
                 }
 
                 if (isMobile) {
-                    // 手機版：透過 class 控制不透明度，不改 display 以確保絕對置中
                     innerPage.classList.add('mobile-active');
                     answerBox.classList.add('show-text');
                 } else {
