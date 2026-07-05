@@ -25,16 +25,14 @@
 
         /* 3D 場景容器 */
         .scene {
-            width: 100%;
-            /* 【核心修改】大幅放寬電腦版最大寬度與高度限制，讓 4:5 的大氣分量完全釋放 */
-            max-width: 720px; 
-            height: 75vh; /* 預設在電腦上吃滿螢幕高度的 75%，變得非常有感、飽滿 */
-            max-height: 900px; 
+            width: 45vw; /* 【修正1】電腦版改用 vw 驅動寬度，保證佔據大比例畫面 */
+            max-width: 600px; /* 大螢幕最大寬度限制 */
+            height: auto;
             
-            /* 強制鎖定在 4:5 的經典扎實書本比例 */
+            /* 強制鎖定在 4:5 的經典扎實書本比例，高度自動計算 */
             aspect-ratio: 4 / 5; 
             
-            perspective: 2500px; /* 放大場景，讓大書本的 3D 效果更立體 */
+            perspective: 2500px; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -55,7 +53,7 @@
             transform: translateX(50%);
         }
 
-        /* 電腦版預設為絕對定位重疊 */
+        /* 預設為絕對定位重疊 */
         .page-component {
             position: absolute;
             width: 100%;
@@ -67,6 +65,11 @@
 
         /* ==================== 1. 雙面複合封面外殼 ==================== */
         .cover-wrapper {
+            /* 【修正2】為了完美遮住底下內頁，將外殼尺寸稍微擴大 2px，重現真實精裝書質感 */
+            width: calc(100% + 4px);
+            height: calc(100% + 4px);
+            top: -2px;
+            left: -2px;
             z-index: 10;
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
@@ -78,12 +81,12 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 100%);
-            border-left: 20px solid #000; /* 隨著書本變大，增加書脊厚度感 */
+            border-left: 20px solid #000; 
             border-radius: 0 16px 16px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 45px; /* 加大內邊距 */
+            padding: 45px; 
             box-shadow: 20px 15px 45px rgba(0,0,0,0.6);
             backface-visibility: hidden;
         }
@@ -106,7 +109,7 @@
         .gold-pattern {
             width: 100%;
             height: 100%;
-            border: 5px double #d4af37; /* 稍微加粗金線，更顯尊貴 */
+            border: 5px double #d4af37; 
             border-radius: 8px;
             display: flex;
             flex-direction: column;
@@ -118,7 +121,7 @@
 
         .diamond-icon {
             color: #d4af37;
-            font-size: 2.2rem; /* 配合大書本放大符號 */
+            font-size: 2.2rem; 
             text-shadow: 0 0 8px rgba(212,175,55,0.6);
             user-select: none;
         }
@@ -133,7 +136,7 @@
 
         .book-title {
             color: #d4af37;
-            font-size: 3.6rem; /* 電腦版標題霸氣放大 */
+            font-size: 3.6rem; 
             letter-spacing: 12px;
             text-align: center;
             line-height: 1.6;
@@ -165,7 +168,7 @@
         /* 答案文字樣式 */
         .answer-text {
             color: #5a4b32;
-            font-size: 2.6rem; /* 答案字體同步放大 */
+            font-size: 2.6rem; 
             line-height: 1.6;
             letter-spacing: 3px;
             text-align: center;
@@ -200,10 +203,7 @@
                 max-width: 380px !important; 
                 height: auto !important;
                 max-height: 65dvh !important; 
-                
-                /* 手機版依然精準鎖定在 4:5 比例，但大小受限於安全邊框 */
                 aspect-ratio: 4 / 5 !important; 
-                
                 margin: 0 !important; 
                 position: relative !important;
                 top: 0 !important;
@@ -212,6 +212,14 @@
             .book {
                 transform: none !important;
                 transition: none !important;
+            }
+
+            .cover-wrapper {
+                /* 手機版還原為 100% 滿版即可 */
+                width: 100% !important;
+                height: 100% !important;
+                top: 0 !important;
+                left: 0 !important;
             }
 
             .page-component {
@@ -227,7 +235,8 @@
                 border-radius: 12px !important;
                 border-left: none !important; 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
-                padding: 20px !important;
+                /* 【修正3】加大手機版的內邊距，讓燙金花紋往內部收縮，凸顯周圍皮質邊緣 */
+                padding: 32px !important; 
             }
 
             .gold-pattern {
@@ -236,17 +245,17 @@
             }
 
             .diamond-icon {
-                font-size: 1.5rem !important; 
+                font-size: 1.4rem !important; 
             }
 
             .book-title {
-                font-size: 2.3rem !important; 
+                font-size: 2.2rem !important; 
                 letter-spacing: 6px !important;
                 line-height: 1.5 !important;
             }
 
             .book-subtitle {
-                font-size: 0.85rem !important;
+                font-size: 0.8rem !important;
                 margin-top: 5px !important;
             }
 
