@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>解答之書</title>
-    <!-- 線上載入專為書籍排版設計的思源宋體 (Noto Serif TC) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
@@ -185,9 +184,9 @@
             user-select: none;
         }
 
-        /* 英文在上樣式 */
+        /* 【修正】英文在上樣式：顏色調整為與中文一樣的深色 (#3b3121) */
         .eng-text {
-            color: #7d705a; 
+            color: #3b3121; 
             font-size: 1.25rem; 
             line-height: 1.6;
             letter-spacing: 2px;
@@ -328,7 +327,6 @@
     <div class="scene">
         <div class="book" id="magicBook" onclick="toggleBook()">
             
-            <!-- 【1. 封面外殼】 -->
             <div class="page-component cover-wrapper" id="frontCover">
                 <div class="cover-front">
                     <div class="gold-pattern">
@@ -343,15 +341,13 @@
                 <div class="cover-back-side"></div>
             </div>
 
-            <!-- 【2. 空白內頁（含中英對照容器）】 -->
             <div class="page-component inner-page-stay" id="innerPage">
                 <div class="answer-container" id="answerBox">
-                    <div class="eng-text" id="engText">Loading...</div>
+                    <div class="eng-text" id="engText"></div>
                     <div class="ch-text" id="chText">載入中...</div>
                 </div>
             </div>
 
-            <!-- 【3. 封底】 -->
             <div class="page-component cover-back"></div>
 
         </div>
@@ -361,12 +357,10 @@
         let isOpen = false;
         let chTruths = [];
         let engTruths = [];
-        const targetIndex = 278; // 鎖定第 278 個答案
 
-        // 【修正】同時讀取外部資料夾的 truth.json 與 EngTruth.json
+        // 同時讀取外部資料夾的 truth.json 與 EngTruth.json
         async function loadAllAnswers() {
             try {
-                // 平行發送兩個 fetch 請求，提升讀取效率
                 const [chRes, engRes] = await Promise.all([
                     fetch('truth.json'),
                     fetch('EngTruth.json')
@@ -378,17 +372,9 @@
                 chTruths = chData.truth;
                 engTruths = engData.truth;
 
-                // 預先填入第 278 個答案
-                if (chTruths[targetIndex] && engTruths[targetIndex]) {
-                    document.getElementById('engText').textContent = engTruths[targetIndex];
-                    document.getElementById('chText').textContent = chTruths[targetIndex];
-                } else {
-                    document.getElementById('engText').textContent = "ERROR";
-                    document.getElementById('chText').textContent = "指定索引超出資料庫範圍";
-                }
+                document.getElementById('chText').textContent = "";
             } catch (error) {
                 console.error("讀取 JSON 檔案失敗：", error);
-                document.getElementById('engText').textContent = "ERROR";
                 document.getElementById('chText').textContent = "未能讀取到中英文答案庫";
             }
         }
@@ -401,12 +387,21 @@
 
             const isMobile = window.innerWidth <= 600;
 
-            // 如果打開時資料還沒加載完，先加載
             if (chTruths.length === 0 || engTruths.length === 0) {
                 await loadAllAnswers();
             }
 
             if (!isOpen) {
+                // 【核心修正】每次翻開時，隨機選取一個 0 ~ 陣列長度之間的索引
+                // 同時以此隨機索引去抽取中文與英文，確保兩者完美對照
+                if (chTruths.length > 0 && engTruths.length > 0) {
+                    const minLength = Math.min(chTruths.length, engTruths.length);
+                    const randomIndex = Math.floor(Math.random() * minLength);
+                    
+                    document.getElementById('engText').textContent = engTruths[randomIndex];
+                    document.getElementById('chText').textContent = chTruths[randomIndex];
+                }
+
                 if (isMobile) {
                     innerPage.classList.add('mobile-active');
                     answerBox.classList.add('show-text');
@@ -433,7 +428,6 @@
             }
         }
 
-        // 監聽鍵盤空白鍵
         window.addEventListener('keydown', function(e) {
             if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) {
                 e.preventDefault(); 
@@ -441,7 +435,6 @@
             }
         });
 
-        // 頁面初始化
         window.addEventListener('DOMContentLoaded', () => {
             loadAllAnswers();
             document.body.focus();
