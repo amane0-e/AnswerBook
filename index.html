@@ -105,24 +105,25 @@
             background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
         }
 
-        /* 燙金核心設計 */
+        /* 【修正】燙金核心設計：邊框與內陰影顏色換成 #BDA369 */
         .gold-pattern {
             width: 100%;
             height: 100%;
-            border: 5px double #d4af37; 
+            border: 5px double #BDA369; 
             border-radius: 8px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
             padding: 60px 40px; 
-            box-shadow: inset 0 0 35px rgba(212,175,55,0.15);
+            box-shadow: inset 0 0 35px rgba(189, 163, 105, 0.15);
         }
 
+        /* 【修正】菱形圖示：顏色換成 #BDA369 */
         .diamond-icon {
-            color: #d4af37;
+            color: #BDA369;
             font-size: 2.4rem; 
-            text-shadow: 0 0 8px rgba(212,175,55,0.6);
+            text-shadow: 0 0 8px rgba(189, 163, 105, 0.4);
             user-select: none;
         }
 
@@ -134,24 +135,27 @@
             flex-grow: 1;
         }
 
+        /* 【修正】書名：顏色換成 #BDA369 */
         .book-title {
             font-family: 'Noto Serif TC', serif;
-            color: #d4af37;
+            color: #BDA369;
             font-size: 3.8rem; 
             letter-spacing: 14px;
             text-align: center;
             line-height: 1.6;
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px rgba(212,175,55,0.4);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px rgba(189, 163, 105, 0.3);
             font-weight: 700;
         }
 
+        /* 【修正】副標題：顏色換成 #BDA369 */
         .book-subtitle {
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 1.3rem; 
-            color: #b8972f; 
+            color: #BDA369; 
             letter-spacing: 3px;
             margin-top: 15px;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            opacity: 0.85; /* 微調透明度讓副標題視覺更有層次 */
         }
 
         /* ==================== 2. 底層留白內頁 ==================== */
@@ -178,13 +182,13 @@
             align-items: center;
             justify-content: center;
             max-width: 90%;
-            gap: 25px; /* 中英文之間的間距 */
+            gap: 25px; 
             opacity: 0;
             transition: opacity 0.4s ease-in-out;
             user-select: none;
         }
 
-        /* 【修正】英文在上樣式：顏色調整為與中文一樣的深色 (#3b3121) */
+        /* 英文在上樣式 */
         .eng-text {
             color: #3b3121; 
             font-size: 1.25rem; 
@@ -262,11 +266,12 @@
                 padding: 0 !important; 
             }
 
+            /* 【修正】手機版邊框顏色也同步調整 */
             .gold-pattern {
                 width: 80% !important;
                 height: 86% !important;
                 padding: 30px 15px !important; 
-                border-width: 4px double #d4af37 !important;
+                border-width: 4px double #BDA369 !important;
                 border-radius: 6px !important;
             }
 
@@ -392,8 +397,7 @@
             }
 
             if (!isOpen) {
-                // 【核心修正】每次翻開時，隨機選取一個 0 ~ 陣列長度之間的索引
-                // 同時以此隨機索引去抽取中文與英文，確保兩者完美對照
+                // 每次翻開時，隨機選取一個索引值並取得相對應的中英文內容
                 if (chTruths.length > 0 && engTruths.length > 0) {
                     const minLength = Math.min(chTruths.length, engTruths.length);
                     const randomIndex = Math.floor(Math.random() * minLength);
