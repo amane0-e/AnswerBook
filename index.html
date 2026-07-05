@@ -23,23 +23,11 @@
             padding: 20px;
         }
 
-        /* 頂部提示文字 */
-        .hint {
-            color: #d4af37;
-            margin-bottom: 25px;
-            font-size: 1.3rem;
-            letter-spacing: 3px;
-            text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
-            font-weight: bold;
-            user-select: none;
-            text-align: center;
-        }
-
-        /* 3D 場景容器：電腦版預設 500x650，手機版透過 max-width 自適應 */
+        /* 3D 場景容器 */
         .scene {
             width: 100%;
             max-width: 500px;
-            height: 75vh; /* 依據螢幕高度彈性調整 */
+            height: 80vh;
             max-height: 650px;
             perspective: 2000px;
         }
@@ -54,12 +42,12 @@
             cursor: pointer;
         }
 
-        /* 電腦版打開時：整本書往右平移 50% 達到完美雙頁置中 */
+        /* 【電腦版專屬】打開時書本右移置中 */
         .book.open-book {
             transform: translateX(50%);
         }
 
-        /* 3D 元件基礎設定 */
+        /* 基礎元件設定 */
         .page-component {
             position: absolute;
             width: 100%;
@@ -73,7 +61,7 @@
         .cover-wrapper {
             z-index: 10;
             transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
         }
 
         /* 封面正面：黑色皮質與雙線燙金 */
@@ -92,7 +80,7 @@
             backface-visibility: hidden;
         }
 
-        /* 封面背面：翻過去後呈現在左邊的純黑皮質內襯 */
+        /* 封面背面：翻過去後左邊顯示的純黑皮質內襯 */
         .cover-back-side {
             position: absolute;
             width: 100%;
@@ -178,41 +166,44 @@
             z-index: 1;
         }
 
+        /* 【電腦版專屬】翻開狀態動畫 */
         .flipped {
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. RWD 手機版專屬優化 ==================== */
+        /* ==================== 4. RWD 手機版切換 (螢幕寬度小於600px) ==================== */
         @media (max-width: 600px) {
-            .hint {
-                font-size: 1.1rem;
-            }
             .book-title {
-                font-size: 2.2rem; /* 手機版書名稍微縮小防止折行 */
+                font-size: 2.2rem;
                 letter-spacing: 5px;
             }
             .gold-pattern::before { top: 15px; }
             .gold-pattern::after { bottom: 15px; }
             
-            /* 核心：手機螢幕寬度太窄，展開時只需往右平移 40% 或更小，避免左邊封面超出螢幕 */
+            /* 關閉手機版的平移效果，書本永遠固定在螢幕正中央 */
             .book.open-book {
-                transform: translateX(42%);
+                transform: translateX(0) !important;
             }
+            
+            /* 關閉手機版的旋轉動畫，改成直接原地淡出 */
             .flipped {
-                transform: rotateY(-165deg) !important; /* 微調手機版翻開角度，視覺更飽滿 */
+                transform: rotateY(0deg) !important; 
+                opacity: 0;
+                pointer-events: none; /* 隱藏後不干擾點擊 */
             }
+
             .answer-text {
-                font-size: 1.5rem; /* 手機版答案字體適度縮小 */
+                font-size: 1.5rem;
             }
             .inner-page-stay {
-                padding: 25px; /* 手機版縮減留白內邊距 */
+                padding: 25px;
+                border-radius: 8px; /* 手機版直接呈現一整張圓角書頁 */
+                background-image: none; /* 移除手機版的書脊壓痕陰影 */
             }
         }
     </style>
 </head>
 <body>
-
-    <div class="hint" id="hintText">✦ 心中默想問題，點擊《解答之書》 ✦</div>
 
     <div class="scene">
         <div class="book" id="magicBook" onclick="toggleBook()">
@@ -255,7 +246,6 @@
             const book = document.getElementById('magicBook');
             const frontCover = document.getElementById('frontCover');
             const answerBox = document.getElementById('answerBox');
-            const hintText = document.getElementById('hintText');
 
             if (truths.length === 0) {
                 await loadAnswers();
@@ -274,7 +264,6 @@
                     answerBox.classList.add('show-text');
                 }, 300);
 
-                hintText.textContent = "✦ 再次點擊，合上《解答之書》 ✦";
                 isOpen = true;
             } else {
                 answerBox.classList.remove('show-text');
@@ -284,7 +273,6 @@
                     book.classList.remove('open-book');
                 }, 100);
 
-                hintText.textContent = "✦ 心中默想問題，點擊《解答之書》 ✦";
                 isOpen = false;
             }
         }
