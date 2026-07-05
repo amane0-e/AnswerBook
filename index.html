@@ -20,8 +20,10 @@
             height: 100dvh; 
             overflow: hidden;
             padding: 20px;
-            /* 移除外框聚焦時的預設藍色醜線 */
             outline: none; 
+            
+            /* 【優化】為全站注入優雅的質感黑體字型組合 */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
         }
 
         /* 3D 場景容器 */
@@ -137,6 +139,7 @@
             text-align: center;
             line-height: 1.6;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px rgba(212,175,55,0.4);
+            font-weight: bold;
         }
 
         .book-subtitle {
@@ -167,11 +170,12 @@
         /* 答案文字樣式 */
         .answer-text {
             color: #5a4b32;
-            font-size: 2.8rem; 
-            line-height: 1.6;
-            letter-spacing: 3px;
+            /* 【修正】縮小電腦版內文尺寸（2.8rem -> 2.2rem），並優化文字排版質感 */
+            font-size: 2.2rem; 
+            line-height: 1.7; /* 增加行高讓字體呼吸 */
+            letter-spacing: 2px; /* 優雅的字距 */
             text-align: center;
-            font-weight: bold;
+            font-weight: 500; /* 改用適中的中黑體，避免過粗顯得笨重 */
             opacity: 0;
             transition: opacity 0.4s ease-in-out;
             max-width: 85%;
@@ -265,7 +269,7 @@
                 border-radius: 12px !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
-                padding: 25px !important;
+                padding: 30px !important;
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
@@ -278,7 +282,9 @@
             }
 
             .answer-text {
-                font-size: 1.6rem !important;
+                /* 【修正】同步將手機版答案文字縮小（1.6rem -> 1.4rem），看起來更為精緻細膩 */
+                font-size: 1.4rem !important;
+                line-height: 1.6 !important;
             }
 
             .cover-back-side, .cover-back {
@@ -353,44 +359,6 @@
                     innerPage.classList.add('mobile-active');
                     answerBox.classList.add('show-text');
                 } else {
-                    book.classList.add('open-book');
-                    frontCover.classList.add('flipped');
-                    setTimeout(() => {
-                        answerBox.classList.add('show-text');
-                    }, 300);
-                }
-
-                isOpen = true;
-            } else {
-                if (isMobile) {
-                    answerBox.classList.remove('show-text');
-                    innerPage.classList.remove('mobile-active');
-                } else {
-                    answerBox.classList.remove('show-text');
-                    setTimeout(() => {
-                        frontCover.classList.remove('flipped');
-                        book.classList.remove('open-book');
-                    }, 100);
-                }
-
-                isOpen = false;
-            }
-        }
-
-        // 【優化】加強空白鍵監聽器判定，並強制防止網頁滾動
-        window.addEventListener('keydown', function(e) {
-            // 相容各種瀏覽器的空白鍵鍵盤名稱
-            if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) {
-                e.preventDefault(); 
-                toggleBook();
-            }
-        });
-
-        // 【新增】網頁載入後，立刻將焦點移至畫面上，確保空白鍵一開就有效
-        window.addEventListener('DOMContentLoaded', () => {
-            loadAnswers();
-            document.body.focus();
-        });
-    </script>
+                    book.classList.add('open-book'); frontCover.classList.add('flipped'); setTimeout(() => { answerBox.classList.add('show-text'); }, 300); } isOpen = true; } else { if (isMobile) { answerBox.classList.remove('show-text'); innerPage.classList.remove('mobile-active'); } else { answerBox.classList.remove('show-text'); setTimeout(() => { frontCover.classList.remove('flipped'); book.classList.remove('open-book'); }, 100); } isOpen = false; } } window.addEventListener('keydown', function(e) { if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) { e.preventDefault(); toggleBook(); } }); window.addEventListener('DOMContentLoaded', () => { loadAnswers(); document.body.focus(); }); </script>
 </body>
 </html>
