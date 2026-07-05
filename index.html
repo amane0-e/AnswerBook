@@ -13,7 +13,7 @@
 
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
-            /* 使用 Grid 佈局提供精準的雙軸絕對置中 */
+            /* 使用 Grid 佈局提供極致精準的雙軸（上下左右）絕對置中 */
             display: grid;
             place-items: center;
             width: 100vw;
@@ -23,12 +23,16 @@
             padding: 20px;
         }
 
-        /* 3D 場景容器（電腦版尺寸） */
+        /* 3D 場景容器：全面改為由 4/5 比例驅動 */
         .scene {
             width: 100%;
-            max-width: 450px;
-            height: 75vh;
-            max-height: 650px;
+            max-width: 440px; /* 電腦版最大寬度 */
+            height: auto;
+            max-height: 550px; /* 電腦版最大高度限制，確保高度縮減 */
+            
+            /* 【核心修改】電腦版也強制鎖定在 4:5 的經典扎實書本比例 */
+            aspect-ratio: 4 / 5; 
+            
             perspective: 2000px;
             display: flex;
             justify-content: center;
@@ -83,7 +87,7 @@
             backface-visibility: hidden;
         }
 
-        /* 封面背面（電腦版用） */
+        /* 封面背面（電腦版翻開後呈現在左側的皮質內襯） */
         .cover-back-side {
             position: absolute;
             width: 100%;
@@ -107,13 +111,13 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 40px 20px;
+            padding: 35px 20px; /* 因高度減短，同步微調內邊距 */
             box-shadow: inset 0 0 25px rgba(212,175,55,0.15);
         }
 
         .diamond-icon {
             color: #d4af37;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             text-shadow: 0 0 6px rgba(212,175,55,0.6);
             user-select: none;
         }
@@ -128,18 +132,18 @@
 
         .book-title {
             color: #d4af37;
-            font-size: 2.8rem;
+            font-size: 2.6rem; /* 配合 4:5 稍矮的比例微調大小 */
             letter-spacing: 8px;
             text-align: center;
-            line-height: 1.8;
+            line-height: 1.6;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(212,175,55,0.4);
         }
 
         .book-subtitle {
-            font-size: 1rem; 
+            font-size: 0.95rem; 
             color: #b8972f; 
             letter-spacing: 2px;
-            margin-top: 10px;
+            margin-top: 8px;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
         }
 
@@ -188,15 +192,15 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 手機版優化佈局 (螢幕寬度小於 600px) ==================== */
+        /* ==================== 4. 手機版專屬優化佈局 (螢幕寬度小於 600px) ==================== */
         @media (max-width: 600px) {
             .scene {
-                width: 88vw !important; /* 寬度佔螢幕的 88% */
+                width: 88vw !important; 
                 max-width: 380px !important; 
                 height: auto !important;
-                max-height: 65dvh !important; /* 再次下修最高高度限制，防止縱向擠壓 */
+                max-height: 65dvh !important; 
                 
-                /* 【核心修改】從 3/4 改為 4 / 5，高度再降低，比例更像一本寬厚精裝書 */
+                /* 手機版同步鎖定在 4:5 比例 */
                 aspect-ratio: 4 / 5 !important; 
                 
                 margin: 0 !important; 
@@ -220,17 +224,17 @@
 
             .cover-front {
                 border-radius: 12px !important;
-                border-left: none !important; 
+                border-left: none !important; /* 手機版平面化隱藏厚脊 */
                 box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
                 padding: 20px !important;
             }
 
             .gold-pattern {
-                padding: 25px 20px !important; /* 書本縮矮後，上下邊距同步縮小，維持黃金比例置中 */
+                padding: 25px 20px !important; 
             }
 
             .diamond-icon {
-                font-size: 1.5rem !important; /* 稍微縮小菱形符號，避免擠壓到文字 */
+                font-size: 1.5rem !important; 
             }
 
             .book-title {
@@ -265,6 +269,7 @@
                 font-size: 1.6rem !important;
             }
 
+            /* 手機版隱藏 3D 元件，降低破綻 */
             .cover-back-side, .cover-back {
                 display: none !important;
             }
