@@ -14,13 +14,12 @@
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
+            width: 100vw;
+            height: 100dvh; /* 使用 dvh 確保完美適配手機瀏覽器工具列，絕不偏移 */
             font-family: 'Noto Serif TC', serif;
             overflow: hidden;
-            padding: 20px;
         }
 
         /* 3D 場景容器（電腦版尺寸） */
@@ -97,7 +96,7 @@
             background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
         }
 
-        /* 燙金核心設計：採用完美垂直分配，避免花紋被擠壓 */
+        /* 燙金核心設計 */
         .gold-pattern {
             width: 100%;
             height: 100%;
@@ -151,7 +150,7 @@
             transform: rotateY(0deg);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* 內頁文字垂直置中 */
             padding: 40px;
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
@@ -188,14 +187,15 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 終極手機版防變形佈局 (螢幕寬度小於 600px) ==================== */
+        /* ==================== 4. 終極手機版防跑版置中佈局 (螢幕寬度小於 600px) ==================== */
         @media (max-width: 600px) {
             .scene {
-                width: 85vw !important; /* 控制手機版寬度不貼邊 */
-                max-width: 360px !important;
+                width: 82vw !important; /* 精準控制寬度 */
+                max-width: 340px !important;
                 height: auto !important;
                 max-height: none !important;
-                aspect-ratio: 9 / 16 !important; /* 強制重現極具質感的修長黃金比例 */
+                aspect-ratio: 9 / 16 !important; /* 鎖定比例，防止文字被壓扁 */
+                margin: 0 auto; /* 水平居中雙重保險 */
             }
             
             .book {
@@ -213,9 +213,10 @@
             .cover-front {
                 position: relative !important;
                 border-radius: 12px !important;
-                border-left: none !important; /* 手機版採平面化，不留單邊厚書脊 */
+                border-left: none !important; 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
                 padding: 25px !important;
+                display: flex !important; /* 確保封面在手機上也正確使用 flex 佈局 */
             }
 
             .gold-pattern {
@@ -237,6 +238,8 @@
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
                 padding: 30px !important;
+                justify-content: center !important;
+                align-items: center !important; /* 再次確保手機版答案絕對垂直置中 */
             }
 
             .answer-text {
@@ -328,7 +331,7 @@
                 if (isMobile) {
                     answerBox.classList.remove('show-text');
                     innerPage.style.display = 'none';
-                    frontCover.style.display = 'block';
+                    frontCover.style.display = 'flex'; // 還原為 flex 確保置中不跑版
                 } else {
                     answerBox.classList.remove('show-text');
                     setTimeout(() => {
