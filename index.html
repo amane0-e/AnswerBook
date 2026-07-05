@@ -26,15 +26,15 @@
         /* 3D 場景容器 */
         .scene {
             width: 100%;
-            /* 【核心修改】放大電腦版最大寬度與高度限制，讓 4:5 的寬厚感完全釋放 */
-            max-width: 520px; 
-            height: auto;
-            max-height: 650px; 
+            /* 【核心修改】大幅放寬電腦版最大寬度與高度限制，讓 4:5 的大氣分量完全釋放 */
+            max-width: 720px; 
+            height: 75vh; /* 預設在電腦上吃滿螢幕高度的 75%，變得非常有感、飽滿 */
+            max-height: 900px; 
             
             /* 強制鎖定在 4:5 的經典扎實書本比例 */
             aspect-ratio: 4 / 5; 
             
-            perspective: 2000px;
+            perspective: 2500px; /* 放大場景，讓大書本的 3D 效果更立體 */
             display: flex;
             justify-content: center;
             align-items: center;
@@ -78,13 +78,13 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 100%);
-            border-left: 18px solid #000; /* 稍微加厚書脊，更有份量 */
-            border-radius: 0 12px 12px 0;
+            border-left: 20px solid #000; /* 隨著書本變大，增加書脊厚度感 */
+            border-radius: 0 16px 16px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 35px;
-            box-shadow: 15px 10px 35px rgba(0,0,0,0.6);
+            padding: 45px; /* 加大內邊距 */
+            box-shadow: 20px 15px 45px rgba(0,0,0,0.6);
             backface-visibility: hidden;
         }
 
@@ -94,11 +94,11 @@
             width: 100%;
             height: 100%;
             background: #111111;
-            border-right: 18px solid #000;
-            border-radius: 12px 0 0 12px;
+            border-right: 20px solid #000;
+            border-radius: 16px 0 0 16px;
             transform: rotateY(180deg);
             backface-visibility: hidden;
-            box-shadow: -15px 10px 35px rgba(0,0,0,0.6);
+            box-shadow: -20px 15px 45px rgba(0,0,0,0.6);
             background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
         }
 
@@ -106,20 +106,20 @@
         .gold-pattern {
             width: 100%;
             height: 100%;
-            border: 4px double #d4af37;
-            border-radius: 6px;
+            border: 5px double #d4af37; /* 稍微加粗金線，更顯尊貴 */
+            border-radius: 8px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 40px 25px; 
-            box-shadow: inset 0 0 25px rgba(212,175,55,0.15);
+            padding: 50px 30px; 
+            box-shadow: inset 0 0 35px rgba(212,175,55,0.15);
         }
 
         .diamond-icon {
             color: #d4af37;
-            font-size: 1.8rem;
-            text-shadow: 0 0 6px rgba(212,175,55,0.6);
+            font-size: 2.2rem; /* 配合大書本放大符號 */
+            text-shadow: 0 0 8px rgba(212,175,55,0.6);
             user-select: none;
         }
 
@@ -133,31 +133,31 @@
 
         .book-title {
             color: #d4af37;
-            font-size: 2.8rem; 
-            letter-spacing: 8px;
+            font-size: 3.6rem; /* 電腦版標題霸氣放大 */
+            letter-spacing: 12px;
             text-align: center;
             line-height: 1.6;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(212,175,55,0.4);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px rgba(212,175,55,0.4);
         }
 
         .book-subtitle {
-            font-size: 1.05rem; 
+            font-size: 1.25rem; 
             color: #b8972f; 
-            letter-spacing: 2px;
-            margin-top: 10px;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            letter-spacing: 3px;
+            margin-top: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
         }
 
         /* ==================== 2. 底層留白內頁 ==================== */
         .inner-page-stay {
             background-color: #fbf9f1;
-            border-radius: 0 8px 8px 0;
+            border-radius: 0 12px 12px 0;
             z-index: 5;
             transform: rotateY(0deg);
             display: flex;
             justify-content: center;
             align-items: center; 
-            padding: 45px;
+            padding: 60px;
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
         }
@@ -165,14 +165,14 @@
         /* 答案文字樣式 */
         .answer-text {
             color: #5a4b32;
-            font-size: 2.2rem; /* 電腦版字體稍微放大 */
+            font-size: 2.6rem; /* 答案字體同步放大 */
             line-height: 1.6;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-align: center;
             font-weight: bold;
             opacity: 0;
             transition: opacity 0.4s ease-in-out;
-            max-width: 90%;
+            max-width: 85%;
             user-select: none;
             word-break: break-all;
         }
@@ -184,7 +184,7 @@
         /* ==================== 3. 封底 ==================== */
         .cover-back {
             background: #0d0d0d;
-            border-radius: 0 12px 12px 0;
+            border-radius: 0 16px 16px 0;
             z-index: 1;
         }
 
@@ -201,7 +201,7 @@
                 height: auto !important;
                 max-height: 65dvh !important; 
                 
-                /* 手機版同樣維持 4:5 比例 */
+                /* 手機版依然精準鎖定在 4:5 比例，但大小受限於安全邊框 */
                 aspect-ratio: 4 / 5 !important; 
                 
                 margin: 0 !important; 
@@ -225,13 +225,14 @@
 
             .cover-front {
                 border-radius: 12px !important;
-                border-left: none !important; /* 手機版平面化隱藏厚脊 */
+                border-left: none !important; 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
                 padding: 20px !important;
             }
 
             .gold-pattern {
                 padding: 25px 20px !important; 
+                border-width: 4px double #d4af37 !important;
             }
 
             .diamond-icon {
@@ -270,7 +271,6 @@
                 font-size: 1.6rem !important;
             }
 
-            /* 手機版隱藏 3D 元件，降低破綻 */
             .cover-back-side, .cover-back {
                 display: none !important;
             }
