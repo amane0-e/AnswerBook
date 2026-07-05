@@ -23,11 +23,11 @@
             padding: 20px;
         }
 
-        /* 3D 場景容器 */
+        /* 3D 場景容器（僅在電腦版生效） */
         .scene {
             width: 100%;
             max-width: 500px;
-            height: 80vh;
+            height: 75vh;
             max-height: 650px;
             perspective: 2000px;
         }
@@ -47,7 +47,7 @@
             transform: translateX(50%);
         }
 
-        /* 基礎元件設定 */
+        /* 電腦版預設為絕對定位重疊 */
         .page-component {
             position: absolute;
             width: 100%;
@@ -61,7 +61,7 @@
         .cover-wrapper {
             z-index: 10;
             transform-style: preserve-3d;
-            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* 封面正面：黑色皮質與雙線燙金 */
@@ -80,7 +80,7 @@
             backface-visibility: hidden;
         }
 
-        /* 封面背面：翻過去後左邊顯示的純黑皮質內襯 */
+        /* 封面背面（電腦版用） */
         .cover-back-side {
             position: absolute;
             width: 100%;
@@ -171,34 +171,55 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. RWD 手機版切換 (螢幕寬度小於600px) ==================== */
+        /* ==================== 4. 終極手機版安全佈局 (螢幕寬度小於 600px) ==================== */
         @media (max-width: 600px) {
-            .book-title {
-                font-size: 2.2rem;
-                letter-spacing: 5px;
+            body {
+                padding: 15px;
             }
-            .gold-pattern::before { top: 15px; }
-            .gold-pattern::after { bottom: 15px; }
-            
-            /* 關閉手機版的平移效果，書本永遠固定在螢幕正中央 */
-            .book.open-book {
-                transform: translateX(0) !important;
+            /* 1. 放棄 3D 的高度限制，改用單純的百分比寬度與固定寬高比 */
+            .scene {
+                height: auto !important;
+                max-height: none !important;
+                aspect-ratio: 3 / 4; /* 強制書本維持完美的 3:4 比例，不隨螢幕亂拉伸 */
             }
-            
-            /* 關閉手機版的旋轉動畫，改成直接原地淡出 */
-            .flipped {
-                transform: rotateY(0deg) !important; 
-                opacity: 0;
-                pointer-events: none; /* 隱藏後不干擾點擊 */
+            .book {
+                transform: none !important;
+                transition: none !important;
             }
-
-            .answer-text {
-                font-size: 1.5rem;
+            /* 2. 手機版不使用重疊，改用常規流動佈局，寬高填滿 */
+            .page-component {
+                position: relative !important;
+                width: 100% !important;
+                height: 100% !important;
+                transform: none !important;
             }
+            /* 3. 預設隱藏內頁，由 JS 切換顯示 */
             .inner-page-stay {
-                padding: 25px;
-                border-radius: 8px; /* 手機版直接呈現一整張圓角書頁 */
-                background-image: none; /* 移除手機版的書脊壓痕陰影 */
+                display: none; 
+                border-radius: 8px !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5) !important;
+                background-image: none !important; /* 手機版不留書脊陰影 */
+                padding: 20px !important;
+            }
+            .cover-front {
+                position: relative !important;
+                border-radius: 8px !important;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.6) !important;
+                padding: 20px !important;
+            }
+            /* 手機版不顯示這些沒必要的 3D 元件，降低破綻 */
+            .cover-back-side, .cover-back {
+                display: none !important;
+            }
+            /* 字體與裝飾縮放 */
+            .book-title {
+                font-size: 2rem !important;
+                letter-spacing: 5px !important;
+            }
+            .gold-pattern::before { top: 15px !important; }
+            .gold-pattern::after { bottom: 15px !important; }
+            .answer-text {
+                font-size: 1.5rem !important;
             }
         }
     </style>
@@ -217,7 +238,7 @@
                 <div class="cover-back-side"></div>
             </div>
 
-            <div class="page-component inner-page-stay">
+            <div class="page-component inner-page-stay" id="innerPage">
                 <div class="answer-text" id="answerBox">載入中...</div>
             </div>
 
@@ -245,38 +266,60 @@
         async function toggleBook() {
             const book = document.getElementById('magicBook');
             const frontCover = document.getElementById('frontCover');
+            const innerPage = document.getElementById('innerPage');
             const answerBox = document.getElementById('answerBox');
+
+            // 偵測目前是不是手機版面
+            const isMobile = window.innerWidth <= 600;
 
             if (truths.length === 0) {
                 await loadAnswers();
             }
 
             if (!isOpen) {
+                // 1. 抽籤隨機解答
                 if (truths.length > 0) {
                     const randomIndex = Math.floor(Math.random() * truths.length);
                     answerBox.textContent = truths[randomIndex];
                 }
 
-                book.classList.add('open-book');
-                frontCover.classList.add('flipped');
-
-                setTimeout(() => {
+                // 2. 開啟邏輯
+                if (isMobile) {
+                    // 手機版：直接隱藏封面，顯示內頁
+                    frontCover.style.display = 'none';
+                    innerPage.style.display = 'flex';
                     answerBox.classList.add('show-text');
-                }, 300);
+                } else {
+                    // 電腦版：使用精美的 3D 動畫
+                    book.classList.add('open-book');
+                    frontCover.classList.add('flipped');
+                    setTimeout(() => {
+                        answerBox.classList.add('show-text');
+                    }, 300);
+                }
 
                 isOpen = true;
             } else {
-                answerBox.classList.remove('show-text');
-                
-                setTimeout(() => {
-                    frontCover.classList.remove('flipped');
-                    book.classList.remove('open-book');
-                }, 100);
+                // 3. 關閉邏輯
+                if (isMobile) {
+                    // 手機版：直接隱藏內頁，顯示封面
+                    answerBox.classList.remove('show-text');
+                    innerPage.style.display = 'none';
+                    frontCover.style.display = 'block';
+                } else {
+                    // 電腦版：還原 3D 狀態
+                    answerBox.classList.remove('show-text');
+                    setTimeout(() => {
+                        frontCover.classList.remove('flipped');
+                        book.classList.remove('open-book');
+                    }, 100);
+                }
 
                 isOpen = false;
             }
         }
 
+        // 初始化載入 JSON
         loadAnswers();
     </script>
 </body>
