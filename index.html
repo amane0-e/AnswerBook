@@ -13,7 +13,7 @@
 
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
-            /* 使用 Grid 佈局提供最強制、最精準的雙軸絕對置中 */
+            /* 使用 Grid 佈局提供精準的雙軸絕對置中 */
             display: grid;
             place-items: center;
             width: 100vw;
@@ -191,13 +191,13 @@
         /* ==================== 4. 手機版優化佈局 (螢幕寬度小於 600px) ==================== */
         @media (max-width: 600px) {
             .scene {
-                width: 90vw !important; /* 加寬安全範圍，讓書本在手機上更飽滿 */
-                max-width: 400px !important; /* 提升最大寬度限制 */
+                width: 88vw !important; /* 寬度佔螢幕的 88% */
+                max-width: 380px !important; 
                 height: auto !important;
-                max-height: 70dvh !important; /* 限制最高高度不超過可視範圍的 70%，避免被工具列往下推 */
+                max-height: 65dvh !important; /* 再次下修最高高度限制，防止縱向擠壓 */
                 
-                /* 【核心修改】改為 3/4 經典書籍比例，左右加寬，視覺分量更扎實 */
-                aspect-ratio: 3 / 4 !important; 
+                /* 【核心修改】從 3/4 改為 4 / 5，高度再降低，比例更像一本寬厚精裝書 */
+                aspect-ratio: 4 / 5 !important; 
                 
                 margin: 0 !important; 
                 position: relative !important;
@@ -222,27 +222,33 @@
                 border-radius: 12px !important;
                 border-left: none !important; 
                 box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
-                padding: 25px !important;
+                padding: 20px !important;
             }
 
             .gold-pattern {
-                padding: 35px 20px !important; /* 微調內襯邊距，讓左右燙金完美對稱 */
+                padding: 25px 20px !important; /* 書本縮矮後，上下邊距同步縮小，維持黃金比例置中 */
+            }
+
+            .diamond-icon {
+                font-size: 1.5rem !important; /* 稍微縮小菱形符號，避免擠壓到文字 */
             }
 
             .book-title {
-                font-size: 2.4rem !important; /* 隨著書本變寬，字體稍微調大，更具美感 */
+                font-size: 2.3rem !important; 
                 letter-spacing: 6px !important;
+                line-height: 1.5 !important;
             }
 
             .book-subtitle {
-                font-size: 0.9rem !important;
+                font-size: 0.85rem !important;
+                margin-top: 5px !important;
             }
 
             .inner-page-stay {
                 border-radius: 12px !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
-                padding: 30px !important;
+                padding: 25px !important;
                 
                 opacity: 0;
                 pointer-events: none;
@@ -256,7 +262,7 @@
             }
 
             .answer-text {
-                font-size: 1.7rem !important;
+                font-size: 1.6rem !important;
             }
 
             .cover-back-side, .cover-back {
