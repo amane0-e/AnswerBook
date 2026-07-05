@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>解答之書</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Noto Serif TC', serif;
+            overflow: hidden;
+        }
+
+        .hint {
+            color: #d4af37;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            letter-spacing: 3px;
+            text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
+            font-weight: bold;
+            user-select: none;
+        }
+
+        .scene {
+            width: 500px;
+            height: 650px;
+            perspective: 2000px;
+        }
+
+        .book {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+        }
+
+        .book.open-book {
+            transform: translateX(50%);
+        }
+
+        .page-component {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            transform-origin: left center;
+        }
+
+        .cover-wrapper {
+            z-index: 10;
+            transform-style: preserve-3d;
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        .cover-front {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1c1c1c 100%);
+            border-left: 15px solid #000;
+            border-radius: 0 8px 8px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 35px;
+            box-shadow: 15px 10px 35px rgba(0,0,0,0.6);
+            backface-visibility: hidden;
+        }
+
+        .cover-back-side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: #111111;
+            border-right: 15px solid #000;
+            border-radius: 8px 0 0 8px;
+            transform: rotateY(180deg);
+            backface-visibility: hidden;
+            box-shadow: -15px 10px 35px rgba(0,0,0,0.6);
+            background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
+        }
+
+        .gold-pattern {
+            width: 92%;
+            height: 94%;
+            border: 4px double #d4af37;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 0 0 25px rgba(212,175,55,0.15);
+        }
+
+        .gold-pattern::before, .gold-pattern::after {
+            content: "❖";
+            color: #d4af37;
+            font-size: 2rem;
+            position: absolute;
+            text-shadow: 0 0 6px rgba(212,175,55,0.6);
+        }
+        .gold-pattern::before { top: 25px; }
+        .gold-pattern::after { bottom: 25px; }
+
+        .book-title {
+            color: #d4af37;
+            font-size: 2.8rem;
+            letter-spacing: 8px;
+            text-align: center;
+            line-height: 1.8;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(212,175,55,0.4);
+        }
+
+        .inner-page-stay {
+            background-color: #fbf9f1;
+            border-radius: 0 5px 5px 0;
+            z-index: 5;
+            transform: rotateY(0deg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
+            box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
+        }
+
+        .answer-text {
+            color: #5a4b32;
+            font-size: 2rem;
+            line-height: 1.6;
+            letter-spacing: 2px;
+            text-align: center;
+            font-weight: bold;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+            max-width: 90%;
+            user-select: none;
+        }
+
+        .show-text {
+            opacity: 1;
+        }
+
+        .cover-back {
+            background: #0d0d0d;
+            border-radius: 0 8px 8px 0;
+            z-index: 1;
+        }
+
+        .flipped {
+            transform: rotateY(-170deg) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hint" id="hintText">✦ 心中默想問題，點擊《解答之書》 ✦</div>
+
+    <div class="scene">
+        <div class="book" id="magicBook" onclick="toggleBook()">
+            
+            <div class="page-component cover-wrapper" id="frontCover">
+                <div class="cover-front">
+                    <div class="gold-pattern">
+                        <div class="book-title">解答之書<br><small style="font-size: 1.1rem; color:#b8972f; letter-spacing: 3px;">THE BOOK OF ANSWERS</small></div>
+                    </div>
+                </div>
+                <div class="cover-back-side"></div>
+            </div>
+
+            <div class="page-component inner-page-stay">
+                <div class="answer-text" id="answerBox">載入中...</div>
+            </div>
+
+            <div class="cover-back"></div>
+
+        </div>
+    </div>
+
+    <script>
+        let isOpen = false;
+        let truths = [];
+
+        // 頁面載入時，自動去撈同資料夾的 JSON 檔
+        async function loadAnswers() {
+            try {
+                const response = await fetch('truth.json');
+                const data = await response.json();
+                truths = data.truth;
+                document.getElementById('answerBox').textContent = ""; // 清空“載入中”
+            } catch (error) {
+                console.error("無法讀取 JSON 檔案，請確認是否使用伺服器環境開啟：", error);
+                document.getElementById('answerBox').textContent = "未能讀取到答案庫";
+            }
+        }
+
+        async function toggleBook() {
+            const book = document.getElementById('magicBook');
+            const frontCover = document.getElementById('frontCover');
+            const answerBox = document.getElementById('answerBox');
+            const hintText = document.getElementById('hintText');
+
+            // 如果陣列還沒載入完，先試著載入
+            if (truths.length === 0) {
+                await loadAnswers();
+            }
+
+            if (!isOpen) {
+                if (truths.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * truths.length);
+                    answerBox.textContent = truths[randomIndex];
+                }
+
+                book.classList.add('open-book');
+                frontCover.classList.add('flipped');
+
+                setTimeout(() => {
+                    answerBox.classList.add('show-text');
+                }, 300);
+
+                hintText.textContent = "✦ 再次點擊，合上《解答之書》 ✦";
+                isOpen = true;
+            } else {
+                answerBox.classList.remove('show-text');
+                
+                setTimeout(() => {
+                    frontCover.classList.remove('flipped');
+                    book.classList.remove('open-book');
+                }, 100);
+
+                hintText.textContent = "✦ 心中默想問題，點擊《解答之書》 ✦";
+                isOpen = false;
+            }
+        }
+
+        // 初始化載入
+        loadAnswers();
+    </script>
+</body>
+</html>
