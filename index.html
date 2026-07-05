@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>解答之書</title>
+    <!-- 【關鍵引入】線上載入專為書籍排版設計的思源宋體 (Noto Serif TC) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    
     <style>
         * {
             box-sizing: border-box;
@@ -22,8 +27,8 @@
             padding: 20px;
             outline: none; 
             
-            /* 【優化】為全站注入優雅的質感黑體字型組合 */
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+            /* 全站預設字體 */
+            font-family: 'Noto Serif TC', serif;
         }
 
         /* 3D 場景容器 */
@@ -133,16 +138,18 @@
         }
 
         .book-title {
+            font-family: 'Noto Serif TC', serif;
             color: #d4af37;
             font-size: 3.8rem; 
             letter-spacing: 14px;
             text-align: center;
             line-height: 1.6;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px rgba(212,175,55,0.4);
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .book-subtitle {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif; /* 英文副標維持無襯線比較現代 */
             font-size: 1.3rem; 
             color: #b8972f; 
             letter-spacing: 3px;
@@ -161,7 +168,7 @@
             display: flex;
             justify-content: center;
             align-items: center; 
-            padding: 60px;
+            padding: 80px; /* 加大內邊距讓字體被壓在中央，四周留白增加 */
             overflow: hidden; 
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
@@ -169,16 +176,17 @@
 
         /* 答案文字樣式 */
         .answer-text {
-            color: #5a4b32;
-            /* 【修正】縮小電腦版內文尺寸（2.8rem -> 2.2rem），並優化文字排版質感 */
-            font-size: 2.2rem; 
-            line-height: 1.7; /* 增加行高讓字體呼吸 */
-            letter-spacing: 2px; /* 優雅的字距 */
+            /* 【核心修正】強制使用古典質感的思源宋體，並大幅縮減字級 */
+            font-family: 'Noto Serif TC', serif;
+            color: #423625; /* 稍微加深一點點，讓宋體的筆畫細節更清晰 */
+            font-size: 1.45rem; /* 大幅縮小，產生高雅的法式精裝書留白感 */
+            line-height: 1.8; 
+            letter-spacing: 3px; 
             text-align: center;
-            font-weight: 500; /* 改用適中的中黑體，避免過粗顯得笨重 */
+            font-weight: 600; /* 宋體加粗後粗細對比極美 */
             opacity: 0;
             transition: opacity 0.4s ease-in-out;
-            max-width: 85%;
+            max-width: 90%;
             user-select: none;
             word-break: break-all;
         }
@@ -269,7 +277,7 @@
                 border-radius: 12px !important;
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
-                padding: 30px !important;
+                padding: 40px !important; /* 加大留白 */
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
@@ -282,9 +290,9 @@
             }
 
             .answer-text {
-                /* 【修正】同步將手機版答案文字縮小（1.6rem -> 1.4rem），看起來更為精緻細膩 */
-                font-size: 1.4rem !important;
-                line-height: 1.6 !important;
+                /* 【修正】手機版內文也同步精緻縮小 */
+                font-size: 1.15rem !important;
+                line-height: 1.7 !important;
             }
 
             .cover-back-side, .cover-back {
@@ -298,6 +306,7 @@
     <div class="scene">
         <div class="book" id="magicBook" onclick="toggleBook()">
             
+            <!-- 【1. 封面外殼】 -->
             <div class="page-component cover-wrapper" id="frontCover">
                 <div class="cover-front">
                     <div class="gold-pattern">
@@ -312,10 +321,12 @@
                 <div class="cover-back-side"></div>
             </div>
 
+            <!-- 【2. 空白內頁】 -->
             <div class="page-component inner-page-stay" id="innerPage">
                 <div class="answer-text" id="answerBox">載入中...</div>
             </div>
 
+            <!-- 【3. 封底】 -->
             <div class="page-component cover-back"></div>
 
         </div>
@@ -359,6 +370,41 @@
                     innerPage.classList.add('mobile-active');
                     answerBox.classList.add('show-text');
                 } else {
-                    book.classList.add('open-book'); frontCover.classList.add('flipped'); setTimeout(() => { answerBox.classList.add('show-text'); }, 300); } isOpen = true; } else { if (isMobile) { answerBox.classList.remove('show-text'); innerPage.classList.remove('mobile-active'); } else { answerBox.classList.remove('show-text'); setTimeout(() => { frontCover.classList.remove('flipped'); book.classList.remove('open-book'); }, 100); } isOpen = false; } } window.addEventListener('keydown', function(e) { if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) { e.preventDefault(); toggleBook(); } }); window.addEventListener('DOMContentLoaded', () => { loadAnswers(); document.body.focus(); }); </script>
+                    book.classList.add('open-book');
+                    frontCover.classList.add('flipped');
+                    setTimeout(() => {
+                        answerBox.classList.add('show-text');
+                    }, 300);
+                }
+
+                isOpen = true;
+            } else {
+                if (isMobile) {
+                    answerBox.classList.remove('show-text');
+                    innerPage.classList.remove('mobile-active');
+                } else {
+                    answerBox.classList.remove('show-text');
+                    setTimeout(() => {
+                        frontCover.classList.remove('flipped');
+                        book.classList.remove('open-book');
+                    }, 100);
+                }
+
+                isOpen = false;
+            }
+        }
+
+        window.addEventListener('keydown', function(e) {
+            if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) {
+                e.preventDefault(); 
+                toggleBook();
+            }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAnswers();
+            document.body.focus();
+        });
+    </script>
 </body>
 </html>
