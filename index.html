@@ -20,8 +20,10 @@
             min-height: 100vh;
             font-family: 'Noto Serif TC', serif;
             overflow: hidden;
+            padding: 20px;
         }
 
+        /* 頂部提示文字 */
         .hint {
             color: #d4af37;
             margin-bottom: 25px;
@@ -30,14 +32,19 @@
             text-shadow: 0 0 5px rgba(212, 175, 55, 0.5);
             font-weight: bold;
             user-select: none;
+            text-align: center;
         }
 
+        /* 3D 場景容器：電腦版預設 500x650，手機版透過 max-width 自適應 */
         .scene {
-            width: 500px;
-            height: 650px;
+            width: 100%;
+            max-width: 500px;
+            height: 75vh; /* 依據螢幕高度彈性調整 */
+            max-height: 650px;
             perspective: 2000px;
         }
 
+        /* 書本主體 */
         .book {
             width: 100%;
             height: 100%;
@@ -47,10 +54,12 @@
             cursor: pointer;
         }
 
+        /* 電腦版打開時：整本書往右平移 50% 達到完美雙頁置中 */
         .book.open-book {
             transform: translateX(50%);
         }
 
+        /* 3D 元件基礎設定 */
         .page-component {
             position: absolute;
             width: 100%;
@@ -60,12 +69,14 @@
             transform-origin: left center;
         }
 
+        /* ==================== 1. 雙面複合封面外殼 ==================== */
         .cover-wrapper {
             z-index: 10;
             transform-style: preserve-3d;
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
+        /* 封面正面：黑色皮質與雙線燙金 */
         .cover-front {
             position: absolute;
             width: 100%;
@@ -81,6 +92,7 @@
             backface-visibility: hidden;
         }
 
+        /* 封面背面：翻過去後呈現在左邊的純黑皮質內襯 */
         .cover-back-side {
             position: absolute;
             width: 100%;
@@ -94,6 +106,7 @@
             background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
         }
 
+        /* 燙金設計 */
         .gold-pattern {
             width: 92%;
             height: 94%;
@@ -125,6 +138,7 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.9), 0 0 10px rgba(212,175,55,0.4);
         }
 
+        /* ==================== 2. 底層留白內頁 ==================== */
         .inner-page-stay {
             background-color: #fbf9f1;
             border-radius: 0 5px 5px 0;
@@ -133,11 +147,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 60px;
+            padding: 40px;
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
         }
 
+        /* 答案文字樣式 */
         .answer-text {
             color: #5a4b32;
             font-size: 2rem;
@@ -149,12 +164,14 @@
             transition: opacity 0.4s ease-in-out;
             max-width: 90%;
             user-select: none;
+            word-break: break-all;
         }
 
         .show-text {
             opacity: 1;
         }
 
+        /* ==================== 3. 封底 ==================== */
         .cover-back {
             background: #0d0d0d;
             border-radius: 0 8px 8px 0;
@@ -163,6 +180,33 @@
 
         .flipped {
             transform: rotateY(-170deg) !important;
+        }
+
+        /* ==================== 4. RWD 手機版專屬優化 ==================== */
+        @media (max-width: 600px) {
+            .hint {
+                font-size: 1.1rem;
+            }
+            .book-title {
+                font-size: 2.2rem; /* 手機版書名稍微縮小防止折行 */
+                letter-spacing: 5px;
+            }
+            .gold-pattern::before { top: 15px; }
+            .gold-pattern::after { bottom: 15px; }
+            
+            /* 核心：手機螢幕寬度太窄，展開時只需往右平移 40% 或更小，避免左邊封面超出螢幕 */
+            .book.open-book {
+                transform: translateX(42%);
+            }
+            .flipped {
+                transform: rotateY(-165deg) !important; /* 微調手機版翻開角度，視覺更飽滿 */
+            }
+            .answer-text {
+                font-size: 1.5rem; /* 手機版答案字體適度縮小 */
+            }
+            .inner-page-stay {
+                padding: 25px; /* 手機版縮減留白內邊距 */
+            }
         }
     </style>
 </head>
@@ -176,7 +220,7 @@
             <div class="page-component cover-wrapper" id="frontCover">
                 <div class="cover-front">
                     <div class="gold-pattern">
-                        <div class="book-title">解答之書<br><small style="font-size: 1.1rem; color:#b8972f; letter-spacing: 3px;">THE BOOK OF ANSWERS</small></div>
+                        <div class="book-title">解答之書<br><small style="font-size: 1rem; color:#b8972f; letter-spacing: 2px;">THE BOOK OF ANSWERS</small></div>
                     </div>
                 </div>
                 <div class="cover-back-side"></div>
@@ -186,7 +230,7 @@
                 <div class="answer-text" id="answerBox">載入中...</div>
             </div>
 
-            <div class="cover-back"></div>
+            <div class="page-component cover-back"></div>
 
         </div>
     </div>
@@ -195,15 +239,14 @@
         let isOpen = false;
         let truths = [];
 
-        // 頁面載入時，自動去撈同資料夾的 JSON 檔
         async function loadAnswers() {
             try {
                 const response = await fetch('truth.json');
                 const data = await response.json();
                 truths = data.truth;
-                document.getElementById('answerBox').textContent = ""; // 清空“載入中”
+                document.getElementById('answerBox').textContent = "";
             } catch (error) {
-                console.error("無法讀取 JSON 檔案，請確認是否使用伺服器環境開啟：", error);
+                console.error("無法讀取 JSON 檔案：", error);
                 document.getElementById('answerBox').textContent = "未能讀取到答案庫";
             }
         }
@@ -214,7 +257,6 @@
             const answerBox = document.getElementById('answerBox');
             const hintText = document.getElementById('hintText');
 
-            // 如果陣列還沒載入完，先試著載入
             if (truths.length === 0) {
                 await loadAnswers();
             }
@@ -247,7 +289,6 @@
             }
         }
 
-        // 初始化載入
         loadAnswers();
     </script>
 </body>
