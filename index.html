@@ -20,6 +20,8 @@
             height: 100dvh; 
             overflow: hidden;
             padding: 20px;
+            /* 移除外框聚焦時的預設藍色醜線 */
+            outline: none; 
         }
 
         /* 3D 場景容器 */
@@ -69,7 +71,7 @@
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 封面正面：黑色皮質與雙線燙金 */
+        /* 封面正面 */
         .cover-front {
             position: absolute;
             width: 100%;
@@ -85,7 +87,7 @@
             backface-visibility: hidden;
         }
 
-        /* 封面背面（翻開後呈現在左側的皮質內襯） */
+        /* 封面背面 */
         .cover-back-side {
             position: absolute;
             width: 100%;
@@ -148,7 +150,6 @@
         /* ==================== 2. 底層留白內頁 ==================== */
         .inner-page-stay {
             background-color: #fbf9f1;
-            /* 讓內頁右縮 2px 並微調半徑，根除死角漏白問題 */
             width: calc(100% - 2px);
             margin-left: 2px;
             border-radius: 0 14px 14px 0;
@@ -235,7 +236,6 @@
                 padding: 0 !important; 
             }
 
-            /* 手機版燙金比例收縮留白 */
             .gold-pattern {
                 width: 80% !important;
                 height: 86% !important;
@@ -266,7 +266,6 @@
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
                 padding: 25px !important;
-                
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 0.3s ease;
@@ -288,7 +287,7 @@
         }
     </style>
 </head>
-<body>
+<body tabindex="0">
 
     <div class="scene">
         <div class="book" id="magicBook" onclick="toggleBook()">
@@ -332,7 +331,6 @@
             }
         }
 
-        // 核心開關邏輯
         async function toggleBook() {
             const book = document.getElementById('magicBook');
             const frontCover = document.getElementById('frontCover');
@@ -379,15 +377,20 @@
             }
         }
 
-        // 【新增】監聽鍵盤事件：按下空白鍵觸發翻頁
+        // 【優化】加強空白鍵監聽器判定，並強制防止網頁滾動
         window.addEventListener('keydown', function(e) {
-            if (e.code === 'Space' || e.keyCode === 32) {
-                e.preventDefault(); // 防止按空白鍵時網頁往下捲動
+            // 相容各種瀏覽器的空白鍵鍵盤名稱
+            if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) {
+                e.preventDefault(); 
                 toggleBook();
             }
         });
 
-        loadAnswers();
+        // 【新增】網頁載入後，立刻將焦點移至畫面上，確保空白鍵一開就有效
+        window.addEventListener('DOMContentLoaded', () => {
+            loadAnswers();
+            document.body.focus();
+        });
     </script>
 </body>
 </html>
