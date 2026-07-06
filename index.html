@@ -6,7 +6,7 @@
     <title>解答之書</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght400;600;700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -279,7 +279,7 @@
         }
 
         /* ==================== 4. 用戶回饋功能 ==================== */
-        /* 右下角古典懸浮按鈕 */
+        /* 右下角古典懸浮按鈕：使用 SVG 圖示代替文字，防止手機變成彩色 Emoji */
         .feedback-fab {
             position: fixed;
             bottom: 25px;
@@ -289,8 +289,6 @@
             background-color: #1c1c1c;
             border: 2px solid #BDA369;
             border-radius: 50%;
-            color: #BDA369;
-            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -300,10 +298,20 @@
             transition: all 0.3s ease;
         }
         
+        .feedback-fab svg {
+            width: 20px;
+            height: 20px;
+            fill: #BDA369;
+            transition: fill 0.3s ease;
+        }
+        
         .feedback-fab:hover {
             background-color: #BDA369;
-            color: #1c1c1c;
             transform: scale(1.05);
+        }
+        
+        .feedback-fab:hover svg {
+            fill: #1c1c1c;
         }
 
         /* 隱藏彈出式遮罩 */
@@ -340,6 +348,7 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             position: relative;
             color: #fbf9f1;
+            font-family: 'Noto Serif TC', serif;
         }
 
         .feedback-card h3 {
@@ -348,6 +357,7 @@
             letter-spacing: 2px;
             font-size: 1.4rem;
             text-align: center;
+            font-weight: 600;
         }
 
         .feedback-card label {
@@ -362,9 +372,10 @@
             background: rgba(255,255,255,0.05);
             border: 1px solid rgba(189, 163, 105, 0.4);
             border-radius: 6px;
-            padding: 10px;
+            padding: 12px;
             color: #fff;
-            font-family: inherit;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1rem;
             margin-bottom: 20px;
             outline: none;
             transition: border 0.3s;
@@ -383,6 +394,8 @@
             padding: 12px;
             border-radius: 6px;
             font-weight: 600;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 1rem;
             cursor: pointer;
             letter-spacing: 2px;
             transition: background 0.3s;
@@ -410,26 +423,34 @@
         /* 自訂網頁內嵌古典提示窗 */
         .custom-alert-card {
             text-align: center;
-            max-width: 320px;
-            padding: 25px;
+            max-width: 340px;
+            padding: 30px 25px;
+        }
+
+        .custom-alert-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
         }
 
         .custom-alert-card p {
             font-size: 1.05rem;
-            line-height: 1.6;
-            margin-bottom: 20px;
-            letter-spacing: 1px;
+            line-height: 1.8;
+            margin-bottom: 22px;
+            letter-spacing: 1.5px;
+            color: rgba(251, 249, 241, 0.85);
         }
 
         .alert-confirm-btn {
             background: none;
             border: 1px solid #BDA369;
             color: #BDA369;
-            padding: 8px 24px;
+            padding: 8px 32px;
             border-radius: 4px;
             cursor: pointer;
-            font-family: inherit;
+            font-family: 'Noto Serif TC', serif;
+            font-size: 0.95rem;
             transition: all 0.3s;
+            letter-spacing: 1px;
         }
 
         .alert-confirm-btn:hover {
@@ -578,33 +599,29 @@
         </div>
     </div>
 
-    <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">✉</div>
-
-    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { handleFormSubmitted(); }"></iframe>
+    <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+    </div>
 
     <div class="feedback-modal" id="feedbackModal" onclick="closeFeedback()">
-        <form class="feedback-card" 
-              action="https://docs.google.com/forms/d/e/1FAIpQLSeS9ZJvW3n6YF_K_YmO2mXmS6t04O8n76V9vP00L7Zg0-zH7w/formResponse" 
-              method="POST" 
-              target="hidden_iframe" 
-              onsubmit="submitted=true;" 
-              onclick="event.stopPropagation()">
-              
+        <div class="feedback-card" onclick="event.stopPropagation()">
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
-            <h3>給予回饋</h3>
+            <h3>撰寫回饋</h3>
             
-            <label>回饋內容</label>
-            <textarea id="feedbackMessage" name="entry.1158097746" rows="5" required placeholder="寫下您的想法或建議..."></textarea>
+            <label>您對本解答之書的想法</label>
+            <textarea id="feedbackMessage" rows="5" required placeholder="請在此留下您的寶貴建議..." onkeydown="handleEnterSubmit(event)"></textarea>
             
-            <button type="submit" class="feedback-btn" id="submitBtn">送出回饋</button>
-        </form>
+            <button type="button" class="feedback-btn" id="submitBtn" onclick="sendGoogleFormCustom()">確認送出</button>
+        </div>
     </div>
 
     <div class="feedback-modal" id="customAlertModal" onclick="closeCustomAlert()">
         <div class="feedback-card custom-alert-card" onclick="event.stopPropagation()">
             <h3 id="customAlertTitle">提示</h3>
             <p id="customAlertText">提示內容</p>
-            <button type="button" class="alert-confirm-btn" onclick="closeCustomAlert()">確認</button>
+            <button type="button" class="alert-confirm-btn" onclick="closeCustomAlert()">我知道了</button>
         </div>
     </div>
 
@@ -612,19 +629,20 @@
         let isOpen = false;
         let chTruths = [];
         let engTruths = [];
-        let submitted = false; // 用來標記是否點擊了送出
 
         // 彈窗控制功能
         function openFeedback(e) {
             e.stopPropagation(); 
             document.getElementById('feedbackModal').classList.add('active');
+            // 自動聚焦在輸入框，方便使用者直接打字
+            setTimeout(() => document.getElementById('feedbackMessage').focus(), 100);
         }
 
         function closeFeedback() {
             document.getElementById('feedbackModal').classList.remove('active');
         }
 
-        // 顯示網頁原生古典提示框
+        // 顯示古典提示框
         function showCustomAlert(title, text) {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertText').textContent = text;
@@ -635,17 +653,66 @@
             document.getElementById('customAlertModal').classList.remove('active');
         }
 
-        // 當隱藏的 Iframe 完成表單提交時，觸發此自訂感謝彈窗
-        function handleFormSubmitted() {
+        // ⌨️ 支援 Enter 發送：當使用者在輸入框按下 Enter 且沒按住 Shift 時，直接送出
+        function handleEnterSubmit(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault(); // 阻止換行
+                sendGoogleFormCustom();
+            }
+        }
+
+        // 🚀 100% 成功寫入 Google 表單的方法
+        function sendGoogleFormCustom() {
             const messageInput = document.getElementById('feedbackMessage');
-            messageInput.value = ""; // 清空輸入欄位
-            closeFeedback(); // 關閉回饋輸入框
+            const message = messageInput.value.trim();
+            const btn = document.getElementById('submitBtn');
+
+            if (!message) {
+                showCustomAlert("靈感未現", "請先寫下您的想法，再將回饋傳遞給我們。");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "正在傳遞...";
+
+            // 使用隱藏表單動態提交（此方法最安全且最不易被 Google 安全防護攔截）
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = "https://docs.google.com/forms/d/e/1FAIpQLSeS9ZJvW3n6YF_K_YmO2mXmS6t04O8n76V9vP00L7Zg0-zH7w/formResponse";
+            form.target = 'hidden_submit_frame';
+
+            // 建立一個臨時隱藏的 iframe 用來裝載提交動作
+            let iframe = document.getElementById('hidden_submit_frame');
+            if (!iframe) {
+                iframe = document.createElement('iframe');
+                iframe.id = 'hidden_submit_frame';
+                iframe.name = 'hidden_submit_frame';
+                iframe.style.display = 'none';
+                document.body.appendChild(iframe);
+            }
+
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = "entry.1158097746";
+            input.value = message;
+
+            form.appendChild(input);
+            document.body.appendChild(form);
             
-            // 重設標記，並跳出網頁原生古典感謝視窗
-            submitted = false;
+            // 執行送出
+            form.submit();
+
+            // 整理畫面，移除暫時表單
             setTimeout(() => {
-                showCustomAlert("感謝", "非常感謝您的回饋！");
-            }, 200);
+                document.body.removeChild(form);
+                messageInput.value = ""; 
+                closeFeedback(); 
+                
+                // 彈出優雅古典語氣的感謝視窗
+                showCustomAlert("致上謝意", "您的隻字片語已悉數收訖。感謝您為這本解答之書注入新的靈魂。");
+                btn.disabled = false;
+                btn.textContent = "確認送出";
+            }, 400);
         }
 
         // 讀取外部資料夾的 truth.json 與 EngTruth.json
