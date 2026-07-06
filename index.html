@@ -278,7 +278,7 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 用戶回饋功能（無頭提交至 Google 表單） ==================== */
+        /* ==================== 4. 用戶回饋功能 ==================== */
         /* 右下角古典懸浮按鈕 */
         .feedback-fab {
             position: fixed;
@@ -306,7 +306,7 @@
             transform: scale(1.05);
         }
 
-        /* 隱藏彈出式回饋與提示遮罩 */
+        /* 隱藏彈出式遮罩 */
         .feedback-modal {
             position: fixed;
             top: 0;
@@ -329,7 +329,7 @@
             pointer-events: auto;
         }
 
-        /* 呼應網頁質感的古典卡片 */
+        /* 古典表單卡片 */
         .feedback-card {
             background: linear-gradient(135deg, #1c1c1c 0%, #0f0f0f 100%);
             border: 2px solid #BDA369;
@@ -392,12 +392,6 @@
             background: #d4bc85;
         }
 
-        .feedback-btn:disabled {
-            background: #555;
-            color: #aaa;
-            cursor: not-allowed;
-        }
-
         .close-modal-btn {
             position: absolute;
             top: 12px;
@@ -413,7 +407,7 @@
             color: #BDA369;
         }
 
-        /* 自訂古典風格的 Alert 彈窗（取代瀏覽器內建視窗） */
+        /* 自訂網頁內嵌古典提示窗 */
         .custom-alert-card {
             text-align: center;
             max-width: 320px;
@@ -586,16 +580,24 @@
 
     <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">✉</div>
 
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted) { handleFormSubmitted(); }"></iframe>
+
     <div class="feedback-modal" id="feedbackModal" onclick="closeFeedback()">
-        <div class="feedback-card" onclick="event.stopPropagation()">
+        <form class="feedback-card" 
+              action="https://docs.google.com/forms/d/e/1FAIpQLSeS9ZJvW3n6YF_K_YmO2mXmS6t04O8n76V9vP00L7Zg0-zH7w/formResponse" 
+              method="POST" 
+              target="hidden_iframe" 
+              onsubmit="submitted=true;" 
+              onclick="event.stopPropagation()">
+              
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
             <h3>給予回饋</h3>
             
             <label>回饋內容</label>
-            <textarea id="feedbackMessage" rows="5" required placeholder="寫下您的想法或建議..."></textarea>
+            <textarea id="feedbackMessage" name="entry.1158097746" rows="5" required placeholder="寫下您的想法或建議..."></textarea>
             
-            <button type="button" class="feedback-btn" id="submitBtn" onclick="submitToGoogleForm()">送出回饋</button>
-        </div>
+            <button type="submit" class="feedback-btn" id="submitBtn">送出回饋</button>
+        </form>
     </div>
 
     <div class="feedback-modal" id="customAlertModal" onclick="closeCustomAlert()">
@@ -610,14 +612,11 @@
         let isOpen = false;
         let chTruths = [];
         let engTruths = [];
-
-        // 💡 您的 Google Form 實體接收端參數
-        const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeS9ZJvW3n6YF_K_YmO2mXmS6t04O8n76V9vP00L7Zg0-zH7w/formResponse";
-        const GOOGLE_FORM_ENTRY_ID = "entry.1158097746"; 
+        let submitted = false; // 用來標記是否點擊了送出
 
         // 彈窗控制功能
         function openFeedback(e) {
-            e.stopPropagation(); // 阻止觸發翻書效果
+            e.stopPropagation(); 
             document.getElementById('feedbackModal').classList.add('active');
         }
 
@@ -625,7 +624,7 @@
             document.getElementById('feedbackModal').classList.remove('active');
         }
 
-        // 自訂古典提示框顯示與關閉
+        // 顯示網頁原生古典提示框
         function showCustomAlert(title, text) {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertText').textContent = text;
@@ -636,49 +635,17 @@
             document.getElementById('customAlertModal').classList.remove('active');
         }
 
-        // 核心提交逻辑：透過 fetch 靜默上傳至 Google 表單
-        function submitToGoogleForm() {
+        // 當隱藏的 Iframe 完成表單提交時，觸發此自訂感謝彈窗
+        function handleFormSubmitted() {
             const messageInput = document.getElementById('feedbackMessage');
-            const message = messageInput.value.trim();
-            const btn = document.getElementById('submitBtn');
-
-            if (!message) {
-                showCustomAlert("提示", "請填寫回饋內容再送出唷！");
-                return;
-            }
-
-            // 防止用戶重複點擊
-            btn.disabled = true;
-            btn.textContent = "傳送中...";
-
-            // 使用 FormData 包裹表單數據
-            const formData = new FormData();
-            formData.append(GOOGLE_FORM_ENTRY_ID, message);
-
-            // mode: 'no-cors' 允許我們在不發生網頁轉跳的情況下將數據安全的送給 Google 表單
-            fetch(GOOGLE_FORM_ACTION_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: formData
-            })
-            .then(() => {
-                // 關閉輸入窗並清空
-                messageInput.value = ""; 
-                closeFeedback(); 
-                
-                // 延遲一下下彈出美麗的網頁置內置感謝視窗
-                setTimeout(() => {
-                    showCustomAlert("感謝", "非常感謝您的回饋！");
-                }, 200);
-            })
-            .catch((err) => {
-                console.error("提交失敗：", err);
-                showCustomAlert("錯誤", "傳送失敗，請稍後再試。");
-            })
-            .finally(() => {
-                btn.disabled = false;
-                btn.textContent = "送出回饋";
-            });
+            messageInput.value = ""; // 清空輸入欄位
+            closeFeedback(); // 關閉回饋輸入框
+            
+            // 重設標記，並跳出網頁原生古典感謝視窗
+            submitted = false;
+            setTimeout(() => {
+                showCustomAlert("感謝", "非常感謝您的回饋！");
+            }, 200);
         }
 
         // 讀取外部資料夾的 truth.json 與 EngTruth.json
@@ -750,7 +717,6 @@
         }
 
         window.addEventListener('keydown', function(e) {
-            // 如果使用者正在打字回饋，不要觸發空白鍵翻書
             if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
                 return;
             }
