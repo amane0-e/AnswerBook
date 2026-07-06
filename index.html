@@ -6,7 +6,7 @@
     <title>解答之書</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
     
     <style>
         * {
@@ -278,8 +278,8 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 用戶回饋功能 ==================== */
-        /* 右下角古典懸浮按鈕：使用 SVG 圖示代替文字，防止手機變成彩色 Emoji */
+        /* ==================== 4. 用戶回饋功能（外觀樣式） ==================== */
+        /* 右下角懸浮按鈕：使用向量 SVG 圖示，防手機變彩色 Emoji */
         .feedback-fab {
             position: fixed;
             bottom: 25px;
@@ -314,7 +314,7 @@
             fill: #1c1c1c;
         }
 
-        /* 隱藏彈出式遮罩 */
+        /* 彈出式遮罩 */
         .feedback-modal {
             position: fixed;
             top: 0;
@@ -337,7 +337,7 @@
             pointer-events: auto;
         }
 
-        /* 古典表單卡片 */
+        /* 彈出卡片外觀 */
         .feedback-card {
             background: linear-gradient(135deg, #1c1c1c 0%, #0f0f0f 100%);
             border: 2px solid #BDA369;
@@ -348,7 +348,8 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             position: relative;
             color: #fbf9f1;
-            font-family: 'Noto Serif TC', serif;
+            /* 💡 強制讓手機與電腦的所有卡片文字同步套用思源宋體 */
+            font-family: 'Noto Serif TC', serif !important;
         }
 
         .feedback-card h3 {
@@ -367,6 +368,13 @@
             color: rgba(251, 249, 241, 0.7);
         }
 
+        /* 💡 強制讓手機版的輸入框與按鈕一律套用電腦版相同的思源宋體 */
+        .feedback-card textarea, 
+        .feedback-card button {
+            font-family: 'Noto Serif TC', serif !important;
+            -webkit-appearance: none; /* 防止 iOS 渲染原生風格 */
+        }
+
         .feedback-card textarea {
             width: 100%;
             background: rgba(255,255,255,0.05);
@@ -374,7 +382,6 @@
             border-radius: 6px;
             padding: 12px;
             color: #fff;
-            font-family: 'Noto Serif TC', serif;
             font-size: 1rem;
             margin-bottom: 20px;
             outline: none;
@@ -394,7 +401,6 @@
             padding: 12px;
             border-radius: 6px;
             font-weight: 600;
-            font-family: 'Noto Serif TC', serif;
             font-size: 1rem;
             cursor: pointer;
             letter-spacing: 2px;
@@ -420,7 +426,7 @@
             color: #BDA369;
         }
 
-        /* 自訂網頁內嵌古典提示窗 */
+        /* 內嵌自然語氣提示窗 */
         .custom-alert-card {
             text-align: center;
             max-width: 340px;
@@ -434,9 +440,9 @@
 
         .custom-alert-card p {
             font-size: 1.05rem;
-            line-height: 1.8;
+            line-height: 1.6;
             margin-bottom: 22px;
-            letter-spacing: 1.5px;
+            letter-spacing: 1px;
             color: rgba(251, 249, 241, 0.85);
         }
 
@@ -447,7 +453,6 @@
             padding: 8px 32px;
             border-radius: 4px;
             cursor: pointer;
-            font-family: 'Noto Serif TC', serif;
             font-size: 0.95rem;
             transition: all 0.3s;
             letter-spacing: 1px;
@@ -610,10 +615,10 @@
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
             <h3>撰寫回饋</h3>
             
-            <label>您對本解答之書的想法</label>
-            <textarea id="feedbackMessage" rows="5" required placeholder="請在此留下您的寶貴建議..." onkeydown="handleEnterSubmit(event)"></textarea>
+            <label>留下您對解答之書的建議</label>
+            <textarea id="feedbackMessage" rows="5" required placeholder="請輸入您的回饋內容..." onkeydown="handleEnterSubmit(event)"></textarea>
             
-            <button type="button" class="feedback-btn" id="submitBtn" onclick="sendGoogleFormCustom()">確認送出</button>
+            <button type="button" class="feedback-btn" id="submitBtn" onclick="simulateSendFeedback()">確認送出</button>
         </div>
     </div>
 
@@ -621,7 +626,7 @@
         <div class="feedback-card custom-alert-card" onclick="event.stopPropagation()">
             <h3 id="customAlertTitle">提示</h3>
             <p id="customAlertText">提示內容</p>
-            <button type="button" class="alert-confirm-btn" onclick="closeCustomAlert()">我知道了</button>
+            <button type="button" class="alert-confirm-btn" onclick="closeCustomAlert()">確認</button>
         </div>
     </div>
 
@@ -634,7 +639,6 @@
         function openFeedback(e) {
             e.stopPropagation(); 
             document.getElementById('feedbackModal').classList.add('active');
-            // 自動聚焦在輸入框，方便使用者直接打字
             setTimeout(() => document.getElementById('feedbackMessage').focus(), 100);
         }
 
@@ -642,7 +646,7 @@
             document.getElementById('feedbackModal').classList.remove('active');
         }
 
-        // 顯示古典提示框
+        // 顯示自訂提示框
         function showCustomAlert(title, text) {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertText').textContent = text;
@@ -653,66 +657,30 @@
             document.getElementById('customAlertModal').classList.remove('active');
         }
 
-        // ⌨️ 支援 Enter 發送：當使用者在輸入框按下 Enter 且沒按住 Shift 時，直接送出
+        // 監聽 Enter 鍵直接發送（Shift+Enter 換行）
         function handleEnterSubmit(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault(); // 阻止換行
-                sendGoogleFormCustom();
+                e.preventDefault(); 
+                simulateSendFeedback();
             }
         }
 
-        // 🚀 100% 成功寫入 Google 表單的方法
-        function sendGoogleFormCustom() {
+        // 💡 純前端模擬點擊發送（移除後端接收，僅保留互動與親切彈窗）
+        function simulateSendFeedback() {
             const messageInput = document.getElementById('feedbackMessage');
             const message = messageInput.value.trim();
-            const btn = document.getElementById('submitBtn');
 
             if (!message) {
-                showCustomAlert("靈感未現", "請先寫下您的想法，再將回饋傳遞給我們。");
+                showCustomAlert("提示", "請先輸入內容再送出唷！");
                 return;
             }
 
-            btn.disabled = true;
-            btn.textContent = "正在傳遞...";
-
-            // 使用隱藏表單動態提交（此方法最安全且最不易被 Google 安全防護攔截）
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = "https://docs.google.com/forms/d/e/1FAIpQLSeS9ZJvW3n6YF_K_YmO2mXmS6t04O8n76V9vP00L7Zg0-zH7w/formResponse";
-            form.target = 'hidden_submit_frame';
-
-            // 建立一個臨時隱藏的 iframe 用來裝載提交動作
-            let iframe = document.getElementById('hidden_submit_frame');
-            if (!iframe) {
-                iframe = document.createElement('iframe');
-                iframe.id = 'hidden_submit_frame';
-                iframe.name = 'hidden_submit_frame';
-                iframe.style.display = 'none';
-                document.body.appendChild(iframe);
-            }
-
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = "entry.1158097746";
-            input.value = message;
-
-            form.appendChild(input);
-            document.body.appendChild(form);
+            // 清空並關閉回饋彈窗
+            messageInput.value = ""; 
+            closeFeedback(); 
             
-            // 執行送出
-            form.submit();
-
-            // 整理畫面，移除暫時表單
-            setTimeout(() => {
-                document.body.removeChild(form);
-                messageInput.value = ""; 
-                closeFeedback(); 
-                
-                // 彈出優雅古典語氣的感謝視窗
-                showCustomAlert("致上謝意", "您的隻字片語已悉數收訖。感謝您為這本解答之書注入新的靈魂。");
-                btn.disabled = false;
-                btn.textContent = "確認送出";
-            }, 400);
+            // 彈出親切自然的現代感謝語
+            showCustomAlert("送出成功", "非常感謝您的回饋！我們會繼續加油，讓解答之書變得更好！");
         }
 
         // 讀取外部資料夾的 truth.json 與 EngTruth.json
