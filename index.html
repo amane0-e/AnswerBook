@@ -278,7 +278,7 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 用戶回饋功能（外觀樣式） ==================== */
+        /* ==================== 4. 用戶回饋功能 ==================== */
         /* 右下角懸浮按鈕：使用向量 SVG 圖示，防手機變彩色 Emoji */
         .feedback-fab {
             position: fixed;
@@ -337,7 +337,7 @@
             pointer-events: auto;
         }
 
-        /* 彈出卡片外觀 */
+        /* 古典表單卡片 */
         .feedback-card {
             background: linear-gradient(135deg, #1c1c1c 0%, #0f0f0f 100%);
             border: 2px solid #BDA369;
@@ -348,7 +348,7 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             position: relative;
             color: #fbf9f1;
-            /* 💡 強制讓手機與電腦的所有卡片文字同步套用思源宋體 */
+            /* 強制讓手機與電腦的所有文字同步套用思源宋體 */
             font-family: 'Noto Serif TC', serif !important;
         }
 
@@ -368,11 +368,11 @@
             color: rgba(251, 249, 241, 0.7);
         }
 
-        /* 💡 強制讓手機版的輸入框與按鈕一律套用電腦版相同的思源宋體 */
+        /* 強制讓手機版的輸入框與按鈕一律套用電腦版相同的思源宋體 */
         .feedback-card textarea, 
         .feedback-card button {
             font-family: 'Noto Serif TC', serif !important;
-            -webkit-appearance: none; /* 防止 iOS 渲染原生風格 */
+            -webkit-appearance: none; /* 防止 iOS 行動網頁渲染出怪異的原生圓角風格 */
         }
 
         .feedback-card textarea {
@@ -426,7 +426,7 @@
             color: #BDA369;
         }
 
-        /* 內嵌自然語氣提示窗 */
+        /* 內嵌現代自然提示窗 */
         .custom-alert-card {
             text-align: center;
             max-width: 340px;
@@ -611,15 +611,18 @@
     </div>
 
     <div class="feedback-modal" id="feedbackModal" onclick="closeFeedback()">
-        <div class="feedback-card" onclick="event.stopPropagation()">
+        <form class="feedback-card" action="https://formspree.io/f/xlgyvlvo" method="POST" id="formspreeForm" onclick="event.stopPropagation()">
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
             <h3>撰寫回饋</h3>
             
             <label>留下您對解答之書的建議</label>
-            <textarea id="feedbackMessage" rows="5" required placeholder="請輸入您的回饋內容..." onkeydown="handleEnterSubmit(event)"></textarea>
             
-            <button type="button" class="feedback-btn" id="submitBtn" onclick="simulateSendFeedback()">確認送出</button>
-        </div>
+            <input type="hidden" name="發送時間" id="feedbackTime">
+            
+            <textarea name="回饋意見" id="feedbackMessage" rows="5" required placeholder="請輸入您的回饋內容..." onkeydown="handleEnterSubmit(event)"></textarea>
+            
+            <button type="submit" class="feedback-btn" id="submitBtn">確認送出</button>
+        </form>
     </div>
 
     <div class="feedback-modal" id="customAlertModal" onclick="closeCustomAlert()">
@@ -646,7 +649,7 @@
             document.getElementById('feedbackModal').classList.remove('active');
         }
 
-        // 顯示自訂提示框
+        // 顯示提示框
         function showCustomAlert(title, text) {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertText').textContent = text;
@@ -657,31 +660,61 @@
             document.getElementById('customAlertModal').classList.remove('active');
         }
 
-        // 監聽 Enter 鍵直接發送（Shift+Enter 換行）
+        // 監聽 Enter 鍵直接發送表單（Shift+Enter 換行）
         function handleEnterSubmit(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault(); 
-                simulateSendFeedback();
+                
+                const form = document.getElementById('formspreeForm');
+                // 檢查是否有輸入文字，通過驗證後主動觸發 Submit 事件
+                if (form.reportValidity()) {
+                    form.dispatchEvent(new Event('submit'));
+                }
             }
         }
 
-        // 💡 純前端模擬點擊發送（移除後端接收，僅保留互動與親切彈窗）
-        function simulateSendFeedback() {
-            const messageInput = document.getElementById('feedbackMessage');
-            const message = messageInput.value.trim();
-
-            if (!message) {
-                showCustomAlert("提示", "請先輸入內容再送出唷！");
-                return;
-            }
-
-            // 清空並關閉回饋彈窗
-            messageInput.value = ""; 
-            closeFeedback(); 
+        // 🚀 使用 Ajax 異步處理 Formspree 表單提交，防止網頁跳轉，保留精美感謝視窗
+        document.getElementById('formspreeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
             
-            // 彈出親切自然的現代感謝語
-            showCustomAlert("送出成功", "非常感謝您的回饋！我們會繼續加油，讓解答之書變得更好！");
-        }
+            const form = this;
+            const messageInput = document.getElementById('feedbackMessage');
+            const btn = document.getElementById('submitBtn');
+            
+            // 送出前自動抓取當下台灣時間，寫入隱藏欄位
+            const now = new Date();
+            document.getElementById('feedbackTime').value = now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+            
+            btn.disabled = true;
+            btn.textContent = "傳送中...";
+            
+            fetch(form.action, {
+                method: form.method,
+                body: new FormData(form),
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    messageInput.value = ""; // 清空文字框
+                    closeFeedback();         // 關閉輸入窗
+                    
+                    // 自然親切的現代感謝詞
+                    showCustomAlert("送出成功", "非常感謝您的回饋！我們會繼續加油，讓解答之書變得更好！");
+                } else {
+                    showCustomAlert("提示", "發送好像有點問題，請稍後再試。");
+                }
+            })
+            .catch(error => {
+                console.error("錯誤:", error);
+                showCustomAlert("提示", "連線失敗，請檢查網路狀態。");
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = "確認送出";
+            });
+        });
 
         // 讀取外部資料夾的 truth.json 與 EngTruth.json
         async function loadAllAnswers() {
