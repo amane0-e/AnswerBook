@@ -166,7 +166,6 @@
         }
 
         /* ==================== 2. 底層留白內頁 ==================== */
-        /* 【核心新增】內頁加上古典細緻的雙線邊框，呈現精裝書開頁感 */
         .inner-page-stay {
             background-color: #fbf9f1;
             width: calc(100% - 2px);
@@ -177,7 +176,7 @@
             display: flex;
             justify-content: center;
             align-items: center; 
-            padding: 35px; /* 縮小一點點外襯，讓內邊框有空間 */
+            padding: 35px; 
             overflow: hidden; 
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
@@ -224,7 +223,7 @@
             text-transform: uppercase; 
         }
 
-        /* 【核心新增】具備設計感的中英對稱幾何分隔線 */
+        /* 設計感分隔線 */
         .decor-line {
             display: flex;
             align-items: center;
@@ -279,7 +278,172 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 手機版專屬優化佈局 ==================== */
+        /* ==================== 4. 用戶回饋功能（無頭提交至 Google 表單） ==================== */
+        /* 右下角古典懸浮按鈕 */
+        .feedback-fab {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 48px;
+            height: 48px;
+            background-color: #1c1c1c;
+            border: 2px solid #BDA369;
+            border-radius: 50%;
+            color: #BDA369;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+        
+        .feedback-fab:hover {
+            background-color: #BDA369;
+            color: #1c1c1c;
+            transform: scale(1.05);
+        }
+
+        /* 隱藏彈出式回饋與提示遮罩 */
+        .feedback-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback-modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 呼應網頁質感的古典卡片 */
+        .feedback-card {
+            background: linear-gradient(135deg, #1c1c1c 0%, #0f0f0f 100%);
+            border: 2px solid #BDA369;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            position: relative;
+            color: #fbf9f1;
+        }
+
+        .feedback-card h3 {
+            color: #BDA369;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        .feedback-card label {
+            display: block;
+            font-size: 0.9rem;
+            margin-bottom: 6px;
+            color: rgba(251, 249, 241, 0.7);
+        }
+
+        .feedback-card textarea {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(189, 163, 105, 0.4);
+            border-radius: 6px;
+            padding: 10px;
+            color: #fff;
+            font-family: inherit;
+            margin-bottom: 20px;
+            outline: none;
+            transition: border 0.3s;
+            resize: none;
+        }
+
+        .feedback-card textarea:focus {
+            border-color: #BDA369;
+        }
+
+        .feedback-btn {
+            width: 100%;
+            background: #BDA369;
+            color: #111;
+            border: none;
+            padding: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            letter-spacing: 2px;
+            transition: background 0.3s;
+        }
+
+        .feedback-btn:hover {
+            background: #d4bc85;
+        }
+
+        .feedback-btn:disabled {
+            background: #555;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.4);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .close-modal-btn:hover {
+            color: #BDA369;
+        }
+
+        /* 自訂古典風格的 Alert 彈窗（取代瀏覽器內建視窗） */
+        .custom-alert-card {
+            text-align: center;
+            max-width: 320px;
+            padding: 25px;
+        }
+
+        .custom-alert-card p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .alert-confirm-btn {
+            background: none;
+            border: 1px solid #BDA369;
+            color: #BDA369;
+            padding: 8px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        .alert-confirm-btn:hover {
+            background: #BDA369;
+            color: #111;
+        }
+
+        /* ==================== 5. 手機版專屬優化佈局 ==================== */
         @media (max-width: 600px) {
             .scene {
                 width: 88vw !important; 
@@ -348,7 +512,6 @@
                 transition: opacity 0.3s ease;
             }
 
-            /* 手機版內頁邊框微調縮小 */
             .inner-page-stay::before {
                 top: 15px;
                 bottom: 15px;
@@ -409,11 +572,9 @@
             <div class="page-component inner-page-stay" id="innerPage">
                 <div class="answer-container" id="answerBox">
                     <div class="eng-text" id="engText"></div>
-                    
                     <div class="decor-line">
                         <div class="decor-diamond"></div>
                     </div>
-                    
                     <div class="ch-text" id="chText">載入中...</div>
                 </div>
             </div>
@@ -423,10 +584,102 @@
         </div>
     </div>
 
+    <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">✉</div>
+
+    <div class="feedback-modal" id="feedbackModal" onclick="closeFeedback()">
+        <div class="feedback-card" onclick="event.stopPropagation()">
+            <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
+            <h3>給予回饋</h3>
+            
+            <label>回饋內容</label>
+            <textarea id="feedbackMessage" rows="5" required placeholder="寫下您的想法或建議..."></textarea>
+            
+            <button type="button" class="feedback-btn" id="submitBtn" onclick="submitToGoogleForm()">送出回饋</button>
+        </div>
+    </div>
+
+    <div class="feedback-modal" id="customAlertModal" onclick="closeCustomAlert()">
+        <div class="feedback-card custom-alert-card" onclick="event.stopPropagation()">
+            <h3 id="customAlertTitle">提示</h3>
+            <p id="customAlertText">提示內容</p>
+            <button type="button" class="alert-confirm-btn" onclick="closeCustomAlert()">確認</button>
+        </div>
+    </div>
+
     <script>
         let isOpen = false;
         let chTruths = [];
         let engTruths = [];
+
+        // 💡 您的 Google Form 實體接收端參數
+        const GOOGLE_FORM_ACTION_URL = "https://docs.google.com/forms/d/e/1FAIpQLSeS9ZJvW3n6YF_K_YmO2mXmS6t04O8n76V9vP00L7Zg0-zH7w/formResponse";
+        const GOOGLE_FORM_ENTRY_ID = "entry.1158097746"; 
+
+        // 彈窗控制功能
+        function openFeedback(e) {
+            e.stopPropagation(); // 阻止觸發翻書效果
+            document.getElementById('feedbackModal').classList.add('active');
+        }
+
+        function closeFeedback() {
+            document.getElementById('feedbackModal').classList.remove('active');
+        }
+
+        // 自訂古典提示框顯示與關閉
+        function showCustomAlert(title, text) {
+            document.getElementById('customAlertTitle').textContent = title;
+            document.getElementById('customAlertText').textContent = text;
+            document.getElementById('customAlertModal').classList.add('active');
+        }
+
+        function closeCustomAlert() {
+            document.getElementById('customAlertModal').classList.remove('active');
+        }
+
+        // 核心提交逻辑：透過 fetch 靜默上傳至 Google 表單
+        function submitToGoogleForm() {
+            const messageInput = document.getElementById('feedbackMessage');
+            const message = messageInput.value.trim();
+            const btn = document.getElementById('submitBtn');
+
+            if (!message) {
+                showCustomAlert("提示", "請填寫回饋內容再送出唷！");
+                return;
+            }
+
+            // 防止用戶重複點擊
+            btn.disabled = true;
+            btn.textContent = "傳送中...";
+
+            // 使用 FormData 包裹表單數據
+            const formData = new FormData();
+            formData.append(GOOGLE_FORM_ENTRY_ID, message);
+
+            // mode: 'no-cors' 允許我們在不發生網頁轉跳的情況下將數據安全的送給 Google 表單
+            fetch(GOOGLE_FORM_ACTION_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: formData
+            })
+            .then(() => {
+                // 關閉輸入窗並清空
+                messageInput.value = ""; 
+                closeFeedback(); 
+                
+                // 延遲一下下彈出美麗的網頁置內置感謝視窗
+                setTimeout(() => {
+                    showCustomAlert("感謝", "非常感謝您的回饋！");
+                }, 200);
+            })
+            .catch((err) => {
+                console.error("提交失敗：", err);
+                showCustomAlert("錯誤", "傳送失敗，請稍後再試。");
+            })
+            .finally(() => {
+                btn.disabled = false;
+                btn.textContent = "送出回饋";
+            });
+        }
 
         // 讀取外部資料夾的 truth.json 與 EngTruth.json
         async function loadAllAnswers() {
@@ -462,7 +715,6 @@
             }
 
             if (!isOpen) {
-                // 翻開時隨機選取一個索引值，同時讀取中文與英文
                 if (chTruths.length > 0 && engTruths.length > 0) {
                     const minLength = Math.min(chTruths.length, engTruths.length);
                     const randomIndex = Math.floor(Math.random() * minLength);
@@ -498,6 +750,10 @@
         }
 
         window.addEventListener('keydown', function(e) {
+            // 如果使用者正在打字回饋，不要觸發空白鍵翻書
+            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+                return;
+            }
             if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) {
                 e.preventDefault(); 
                 toggleBook();
