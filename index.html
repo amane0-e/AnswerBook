@@ -565,11 +565,11 @@
 
             // 載入戀愛解答 
             try {
-                const [loveChRes, loveEngRes] = await Promise.all([ fetch('love_truth.json'), fetch('love_EngTruth.json') ]);
+                const [loveChRes, loveEngRes] = await Promise.all([ fetch('LoveTruth.json'), fetch('EngLoveTruth.json') ]);
                 loveChTruths = (await loveChRes.json()).truth || [];
                 loveEngTruths = (await loveEngRes.json()).truth || [];
             } catch (error) {
-                console.warn("未找到戀愛答案庫。");
+                console.warn("未找到戀愛答案庫。", error);
                 loveChTruths = [];
                 loveEngTruths = [];
             }
