@@ -32,7 +32,7 @@
             font-family: 'Noto Serif TC', serif;
         }
 
-        /* 主包裝容器：負責垂直排列書本與下方的手機按鈕 */
+        /* 主包裝容器：負責在手機版將書本與下方的按鈕垂直排列 */
         .main-wrapper {
             display: flex;
             flex-direction: column;
@@ -51,7 +51,6 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* 書本主體 */
@@ -64,9 +63,9 @@
             cursor: pointer;
         }
 
-        /* 打開時書本整體右移置中，騰出左邊封面翻開的空間 */
+        /* 打開時書本右移置中 */
         .book.open-book {
-            transform: translateX(25%);
+            transform: translateX(50%);
         }
 
         /* 預設為絕對定位重疊 */
@@ -87,7 +86,7 @@
             left: -3px;
             z-index: 10;
             transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* 封面正面 */
@@ -290,17 +289,17 @@
             opacity: 1;
         }
 
-        /* 📱手機行動版專屬：位於書頁外部下方空間的雙按鈕控制區 */
+        /* 📱手機行動版專屬：位於書頁外部下方的雙按鈕控制區（預設隱藏，僅在手機尺寸且翻開時動態出現） */
         .mobile-action-group {
             display: none;
-            width: 85vw;
-            max-width: 340px;
+            width: 88vw;
+            max-width: 380px;
             justify-content: space-between;
             gap: 15px;
-            margin-top: 35px; /* 增加與書本的間距，讓排版有呼吸空間 */
+            margin-top: 25px;
             opacity: 0;
             pointer-events: none;
-            transition: opacity 0.4s ease;
+            transition: opacity 0.3s ease;
             z-index: 100;
         }
 
@@ -362,10 +361,10 @@
 
         /* 翻開狀態動畫 */
         .flipped {
-            transform: rotateY(-165deg) !important;
+            transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 用戶回饋與電腦版功能懸浮鈕 ==================== */
+        /* ==================== 4. 用戶回饋與功能按鈕 ==================== */
         /* 右下角懸浮按鈕（回饋信箱） */
         .feedback-fab {
             position: fixed;
@@ -401,10 +400,10 @@
             fill: #1c1c1c;
         }
 
-        /* 💻 桌機網頁版：儲存下載懸浮按鈕（金底黑圖示） */
+        /* 🚀 桌機網頁版：儲存下載懸浮按鈕（向下箭頭+橫線） */
         .share-fab {
             position: fixed;
-            bottom: 145px; /* 上調位置，留空間給下方的分享按鈕 */
+            bottom: 85px; 
             right: 25px;
             width: 48px;
             height: 48px;
@@ -446,49 +445,6 @@
 
         .share-fab:hover svg {
             stroke: #1c1c1c; 
-        }
-
-        /* 💻 桌機網頁版：新增分享懸浮按鈕（在下載下方，採金邊黑底風格） */
-        .pc-share-fab {
-            position: fixed;
-            bottom: 85px; /* 剛好位於下載按鈕下方 */
-            right: 25px;
-            width: 48px;
-            height: 48px;
-            background-color: #1c1c1c;
-            border: 2px solid #BDA369;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            z-index: 999;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: scale(0); 
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .pc-share-fab.active {
-            transform: scale(1);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .pc-share-fab svg {
-            width: 20px;
-            height: 20px;
-            fill: #BDA369;
-            transition: fill 0.3s ease;
-        }
-
-        .pc-share-fab:hover {
-            background-color: #BDA369;
-        }
-
-        .pc-share-fab:hover svg {
-            fill: #1c1c1c;
         }
 
         /* 彈出式遮罩 */
@@ -638,42 +594,50 @@
             color: #111;
         }
 
-        /* ==================== 5. 📱 手機版 RWD 3D 翻頁感極致優化 ==================== */
+        /* ==================== 5. 手機版專屬優化佈局 ==================== */
         @media (max-width: 600px) {
-            /* 讓書本主體在手機版等比例縮小，並保留完整的 3D 視角空間 */
             .scene {
-                width: 76vw !important; 
-                max-width: 320px !important; 
+                width: 88vw !important; 
+                max-width: 380px !important; 
                 height: auto !important;
+                max-height: 60dvh !important; /* 壓縮高度保留空間給下方按鈕組 */
                 aspect-ratio: 4 / 5 !important; 
                 margin: 0 !important; 
-                perspective: 1800px !important; /* 調整透視，讓翻頁更立體 */
+                position: relative !important;
+                top: 0 !important;
             }
-
-            /* 手機版翻開時，書本整體右移，空出左邊翻開的封面空間 */
-            .book.open-book {
-                transform: translateX(25%) !important;
+            
+            .book {
+                transform: none !important;
+                transition: none !important;
             }
 
             .cover-wrapper {
-                width: calc(100% + 4px) !important;
-                height: calc(100% + 4px) !important;
-                top: -2px !important;
-                left: -2px !important;
+                width: 100% !important;
+                height: 100% !important;
+                top: 0 !important;
+                left: 0 !important;
             }
 
-            /* 手機版封面正面與背面：完整保留 3D 圓角與側面厚度邊線 */
+            .page-component {
+                position: absolute !important; 
+                width: 100% !important;
+                height: 100% !important;
+                transform: none !important;
+                top: 0 !important;
+                left: 0 !important;
+            }
+
             .cover-front {
-                border-radius: 0 12px 12px 0 !important;
-                border-left: 12px solid #000 !important; 
-                box-shadow: 15px 15px 35px rgba(0,0,0,0.6) !important;
+                border-radius: 12px !important;
+                border-left: none !important; 
+                box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important;
                 padding: 15px !important; 
             }
 
-            .cover-back-side {
-                border-radius: 12px 0 0 12px !important;
-                border-right: 12px solid #000 !important;
-                box-shadow: -15px 15px 35px rgba(0,0,0,0.6) !important;
+            .gold-pattern {
+                width: 100% !important;
+                height: 100% !important;
             }
 
             .book-title {
@@ -687,21 +651,22 @@
                 margin-top: 5px !important;
             }
 
-            /* 留白內頁在手機上的立體陰影與弧度優化 */
             .inner-page-stay {
-                width: calc(100% - 2px) !important;
-                margin-left: 2px !important;
-                border-radius: 0 10px 10px 0 !important;
-                box-shadow: 3px 3px 20px rgba(0,0,0,0.4) !important;
-                padding: 20px !important; 
+                width: 100% !important;
+                margin-left: 0 !important;
+                border-radius: 12px !important;
+                box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
+                background-image: none !important; 
+                padding: 30px !important; 
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s ease;
             }
 
             /* 手機截圖同步移除陰影 */
             .inner-page-stay.snapshot-mode {
                 box-shadow: none !important;
-                border-radius: 10px !important;
-                margin-left: 0 !important;
-                width: 100% !important;
+                border-radius: 12px !important;
             }
 
             .inner-page-stay::before {
@@ -711,18 +676,24 @@
                 right: 15px;
                 outline-offset: -5px;
             }
+            
+            .inner-page-stay.mobile-active {
+                opacity: 1;
+                pointer-events: auto;
+                z-index: 12; 
+            }
 
             .answer-container {
-                max-width: 90% !important;
+                max-width: 85% !important;
                 gap: 12px !important;
             }
 
             .eng-text {
-                font-size: 0.95rem !important;
+                font-size: 1.05rem !important;
             }
 
             .decor-line {
-                width: 90px !important;
+                width: 100px !important;
                 height: 14px !important;
             }
 
@@ -731,8 +702,12 @@
                 letter-spacing: 3px !important;
             }
 
-            /* 📱 手機版直接隱藏右下角的電腦版懸浮 icon */
-            .share-fab, .pc-share-fab {
+            /* 📱 手機版直接強制隱藏右下角的懸浮下載 icon */
+            .share-fab {
+                display: none !important;
+            }
+
+            .cover-back-side, .cover-back {
                 display: none !important;
             }
         }
@@ -750,7 +725,7 @@
         <div class="scene">
             <div class="book" id="magicBook" onclick="toggleBook()">
                 
-                <!-- 【1. 雙面複合封面外殼】 -->
+                <!-- 【1. 封面外殼】 -->
                 <div class="page-component cover-wrapper" id="frontCover">
                     <div class="cover-front">
                         <div class="gold-pattern"></div>
@@ -764,8 +739,9 @@
                     <div class="cover-back-side"></div>
                 </div>
 
-                <!-- 【2. 古典留白內頁】 -->
+                <!-- 【2. 空白內頁】 -->
                 <div class="page-component inner-page-stay" id="innerPage">
+                    <!-- 答案內文區 -->
                     <div class="answer-container" id="answerBox">
                         <div class="eng-text" id="engText"></div>
                         <div class="decor-line">
@@ -781,11 +757,11 @@
             </div>
         </div>
 
-        <!-- 📱【手機版專屬：位於整本書正下方的雙橢圓按鈕組】 -->
+        <!-- 📱【手機版專屬：書頁外面下方的雙楕圓功能按鈕區】 -->
         <div class="mobile-action-group" id="mobileActionGroup">
-            <!-- 金底黑字完美橢圓 -->
+            <!-- 金底黑字橢圓 -->
             <button type="button" class="mobile-action-btn btn-download-gold" onclick="saveAsImage(event)">下載答案</button>
-            <!-- 金邊黑底完美橢圓 -->
+            <!-- 金邊黑底橢圓 -->
             <button type="button" class="mobile-action-btn btn-share-black" onclick="shareAnswer(event)">分享答案</button>
         </div>
 
@@ -799,14 +775,7 @@
         </svg>
     </div>
 
-    <!-- 💻【電腦版：右下角懸浮分享按鈕 (位於下載下方)】 -->
-    <div class="pc-share-fab" id="pcShareBtn" onclick="shareAnswer(event)" title="分享解答文字連結">
-        <svg viewBox="0 0 24 24">
-            <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
-        </svg>
-    </div>
-
-    <!-- 【右下角懸浮回饋按鈕】 -->
+    <!-- 【懸浮回饋按鈕】 -->
     <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">
         <svg viewBox="0 0 24 24">
             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
@@ -883,15 +852,16 @@
             });
         }
 
-        // 分享功能 (跨平台相容手機與網頁桌機版)
+        // 📱 手機版：分享答案功能
         function shareAnswer(e) {
-            e.stopPropagation(); 
+            e.stopPropagation(); // 阻止事件冒泡
             
             const chText = document.getElementById('chText').textContent;
             const engText = document.getElementById('engText').textContent;
             
             if (!chText || chText === "載入中...") return;
 
+            // 如果手機瀏覽器支援原生分享 API
             if (navigator.share) {
                 navigator.share({
                     title: '解答之書',
@@ -901,12 +871,13 @@
                     console.log("使用者取消分享或失敗:", err);
                 });
             } else {
+                // 不支援時的貼心降級處理 (如部分 LINE/FB 內建瀏覽器)
                 navigator.clipboard.writeText(`我在【解答之書】得到了這個答案：\n\n「${chText}」\n${engText}`)
                 .then(() => {
                     showCustomAlert("連結已複製", "已複製文字解答！您可以直接貼上分享給好友，或直接使用「下載答案」儲存精美圖片唷！");
                 })
                 .catch(() => {
-                    showCustomAlert("提示", "建議直接點擊「下載答案」按鈕，即可儲存最精美的解答書頁圖片並分享囉！");
+                    showCustomAlert("提示", "建議直接點擊左側「下載答案」按鈕，即可儲存最精美的解答書頁圖片並分享囉！");
                 });
             }
         }
@@ -997,9 +968,9 @@
         async function toggleBook() {
             const book = document.getElementById('magicBook');
             const frontCover = document.getElementById('frontCover');
+            const innerPage = document.getElementById('innerPage');
             const answerBox = document.getElementById('answerBox');
             const shareBtn = document.getElementById('shareBtn');
-            const pcShareBtn = document.getElementById('pcShareBtn');
             const mobileActionGroup = document.getElementById('mobileActionGroup');
 
             const isMobile = window.innerWidth <= 600;
@@ -1018,33 +989,40 @@
                     document.getElementById('chText').textContent = chTruths[randomIndex];
                 }
 
-                // 手機版與電腦版皆使用流暢的 3D 翻書動畫機制
-                book.classList.add('open-book');
-                frontCover.classList.add('flipped');
-                
-                setTimeout(() => { 
-                    answerBox.classList.add('show-text');
-                    if (!isMobile) {
-                        shareBtn.classList.add('active'); 
-                        pcShareBtn.classList.add('active'); 
-                    } else {
-                        mobileActionGroup.classList.add('active');
-                    }
-                }, 300);
-
+                if (isMobile) {
+                    innerPage.classList.add('mobile-active');
+                    answerPageShowLogic();
+                } else {
+                    book.classList.add('open-book');
+                    frontCover.classList.add('flipped');
+                    setTimeout(() => { answerPageShowLogic(); }, 300);
+                }
                 isOpen = true;
             } else {
                 shareBtn.classList.remove('active');
-                pcShareBtn.classList.remove('active');
                 if (isMobile) mobileActionGroup.classList.remove('active');
-                answerBox.classList.remove('show-text');
-                
-                setTimeout(() => {
-                    frontCover.classList.remove('flipped');
-                    book.classList.remove('open-book');
-                }, 100);
 
+                if (isMobile) {
+                    answerBox.classList.remove('show-text');
+                    innerPage.classList.remove('mobile-active');
+                } else {
+                    answerBox.classList.remove('show-text');
+                    setTimeout(() => {
+                        frontCover.classList.remove('flipped');
+                        book.classList.remove('open-book');
+                    }, 100);
+                }
                 isOpen = false;
+            }
+
+            function answerPageShowLogic() {
+                answerBox.classList.add('show-text');
+                if (!isMobile) {
+                    shareBtn.classList.add('active'); 
+                } else {
+                    // 手機版：內頁文字浮現時，下方的功能按鈕組同步浮現
+                    mobileActionGroup.classList.add('active');
+                }
             }
         }
 
