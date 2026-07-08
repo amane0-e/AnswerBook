@@ -42,11 +42,7 @@
             --toggle-text: #fff;
         }
 
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
@@ -59,11 +55,6 @@
             padding: 20px;
             outline: none; 
             font-family: 'Noto Serif TC', serif;
-        }
-
-        /* 🌟 讓變色時能夠完美同步的過場動畫元件（避免干擾書本翻頁） */
-        .cover-front, .cover-back-side, .mode-toggle-btn, .mobile-action-btn, .desktop-fab, .feedback-fab {
-            transition: background 0.4s ease, color 0.4s ease, border-color 0.4s ease, transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.4s ease !important;
         }
 
         /* 主包裝容器 */
@@ -102,6 +93,7 @@
             font-size: 0.95rem;
             letter-spacing: 2px;
             cursor: pointer;
+            transition: all 0.3s ease;
             font-weight: 600;
         }
 
@@ -127,6 +119,7 @@
             height: 100%;
             position: relative;
             transform-style: preserve-3d;
+            transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
             cursor: pointer;
         }
 
@@ -138,6 +131,7 @@
         .cover-wrapper {
             width: calc(100% + 6px); height: calc(100% + 6px); top: -3px; left: -3px;
             z-index: 10; transform-style: preserve-3d; transform-origin: left center;
+            transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* 書皮與書脊變色設定 */
@@ -149,6 +143,7 @@
             display: flex; justify-content: center; align-items: center;
             padding: 25px; box-shadow: 25px 20px 50px rgba(0,0,0,0.65);
             backface-visibility: hidden;
+            transition: none;
         }
 
         .cover-back-side {
@@ -159,6 +154,7 @@
             transform: rotateY(180deg); backface-visibility: hidden;
             box-shadow: -25px 20px 50px rgba(0,0,0,0.65);
             background-image: linear-gradient(to left, rgba(0,0,0,0.4) 0%, rgba(0,0,0,0) 10%);
+            transition: none;
         }
 
         /* 古典花框，永遠金色 */
@@ -212,7 +208,7 @@
             display: none; position: absolute; bottom: calc((100dvh - 60dvh) / 4 - 10px); left: 50%; transform: translateX(-50%); width: 88vw; max-width: 380px; justify-content: space-between; gap: 15px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100;
         }
         .mobile-action-group.active { display: flex !important; opacity: 1; pointer-events: auto; }
-        .mobile-action-btn { flex: 1; height: 44px; border-radius: 50px; font-family: 'Noto Serif TC', serif; font-weight: 600; font-size: 0.95rem; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; -webkit-appearance: none; border: none; }
+        .mobile-action-btn { flex: 1; height: 44px; border-radius: 50px; font-family: 'Noto Serif TC', serif; font-weight: 600; font-size: 0.95rem; letter-spacing: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; -webkit-appearance: none; border: none; }
         
         .btn-download-gold { background-color: var(--theme-gold); color: #111111; box-shadow: 0 4px 12px var(--theme-shadow); }
         .btn-download-gold:active { transform: scale(0.96); background-color: var(--theme-gold-active); }
@@ -220,7 +216,7 @@
         .btn-share-black:active { transform: scale(0.96); background-color: #2b2b2b; }
 
         /* 電腦懸浮按鈕：全在右側 */
-        .desktop-fab { position: fixed; right: 25px; width: 48px; height: 48px; background-color: #1c1c1c; border: 2px solid var(--theme-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 999; transform: scale(0); opacity: 0; pointer-events: none; }
+        .desktop-fab { position: fixed; right: 25px; width: 48px; height: 48px; background-color: #1c1c1c; border: 2px solid var(--theme-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 999; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0); opacity: 0; pointer-events: none; }
         .desktop-fab.active { transform: scale(1); opacity: 1; pointer-events: auto; }
         .desktop-fab svg { width: 24px; height: 24px; stroke: var(--theme-gold); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; transition: stroke 0.3s ease; }
         .desktop-fab:hover { background-color: var(--theme-gold); }
@@ -229,7 +225,7 @@
         .share-fab { bottom: 85px; }
 
         /* 右下回饋按鈕 (與上面對齊) */
-        .feedback-fab { position: fixed; bottom: 25px; right: 25px; width: 48px; height: 48px; background-color: #1c1c1c; border: 2px solid var(--theme-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 999; }
+        .feedback-fab { position: fixed; bottom: 25px; right: 25px; width: 48px; height: 48px; background-color: #1c1c1c; border: 2px solid var(--theme-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); z-index: 999; transition: all 0.3s ease; }
         .feedback-fab svg { width: 20px; height: 20px; fill: var(--theme-gold); transition: fill 0.3s ease; }
         .feedback-fab:hover { background-color: var(--theme-gold); transform: scale(1.05); }
         .feedback-fab:hover svg { fill: #1c1c1c; }
@@ -237,20 +233,20 @@
         /* 彈出窗 */
         .feedback-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; z-index: 1000; transition: opacity 0.3s ease; }
         .feedback-modal.active { opacity: 1; pointer-events: auto; }
-        .feedback-card { background: linear-gradient(135deg, #1c1c1c 0%, #0f0f0f 100%); border: 2px solid var(--theme-gold); border-radius: 12px; width: 90%; max-width: 400px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; color: #fbf9f1; font-family: 'Noto Serif TC', serif !important; }
+        .feedback-card { background: linear-gradient(135deg, #1c1c1c 0%, #0f0f0f 100%); border: 2px solid var(--theme-gold); border-radius: 12px; width: 90%; max-width: 400px; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.8); position: relative; color: #fbf9f1; font-family: 'Noto Serif TC', serif !important; transition: border-color 0.4s ease; }
         .feedback-card h3 { color: var(--theme-gold); margin-bottom: 15px; letter-spacing: 2px; font-size: 1.4rem; text-align: center; font-weight: 600; }
         .feedback-card label { display: block; font-size: 0.9rem; margin-bottom: 6px; color: rgba(251, 249, 241, 0.7); }
         .feedback-card textarea, .feedback-card button { font-family: 'Noto Serif TC', serif !important; -webkit-appearance: none; }
         .feedback-card textarea { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(189, 163, 105, 0.4); border-radius: 6px; padding: 12px; color: #fff; font-size: 1rem; margin-bottom: 20px; outline: none; transition: border 0.3s; resize: none; }
         .feedback-card textarea:focus { border-color: var(--theme-gold); }
-        .feedback-btn { width: 100%; background: var(--theme-gold); color: #111; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; letter-spacing: 2px; }
+        .feedback-btn { width: 100%; background: var(--theme-gold); color: #111; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; letter-spacing: 2px; transition: background 0.3s; }
         .feedback-btn:hover { background: var(--theme-gold-hover); }
-        .close-modal-btn { position: absolute; top: 12px; right: 15px; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 1.5rem; cursor: pointer;}
+        .close-modal-btn { position: absolute; top: 12px; right: 15px; background: none; border: none; color: rgba(255,255,255,0.4); font-size: 1.5rem; cursor: pointer; transition: color 0.3s ease;}
         .close-modal-btn:hover { color: var(--theme-gold); }
         
         .custom-alert-card { text-align: center; max-width: 340px; padding: 30px 25px; }
         .custom-alert-card p { font-size: 1.05rem; line-height: 1.6; margin-bottom: 22px; letter-spacing: 1px; color: rgba(251, 249, 241, 0.85); }
-        .alert-confirm-btn { background: none; border: 1px solid var(--theme-gold); color: var(--theme-gold); padding: 8px 32px; border-radius: 4px; cursor: pointer; font-size: 0.95rem; letter-spacing: 1px; }
+        .alert-confirm-btn { background: none; border: 1px solid var(--theme-gold); color: var(--theme-gold); padding: 8px 32px; border-radius: 4px; cursor: pointer; font-size: 0.95rem; transition: all 0.3s; letter-spacing: 1px; }
         .alert-confirm-btn:hover { background: var(--theme-gold); color: #111; }
 
         /* 手機板 */
@@ -267,7 +263,7 @@
                 top: 0 !important;
             }
             .book { transform: none !important; transition: none !important; }
-            .cover-wrapper { width: 100% !important; height: 100% !important; top: 0 !important; left: 0 !important; transform-origin: center center !important; }
+            .cover-wrapper { width: 100% !important; height: 100% !important; top: 0 !important; left: 0 !important; transform-origin: center center !important; transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important; }
             .cover-wrapper.flipped { transform: none !important; opacity: 0 !important; pointer-events: none !important; }
             .page-component { position: absolute !important; width: 100% !important; height: 100% !important; transform: none !important; top: 0 !important; left: 0 !important; }
             .cover-front { border-radius: 12px !important; border-left: none !important; box-shadow: 0 15px 40px rgba(0,0,0,0.6) !important; padding: 15px !important; }
@@ -318,6 +314,7 @@
                         <div class="gold-pattern"></div>
                         <div class="book-title-container">
                             <div class="book-title-area">
+                                <!-- 加上 ID，讓 JS 可以動態替換文字 -->
                                 <div class="book-title" id="bookTitleCh">解答之書</div>
                                 <div class="book-subtitle" id="bookTitleEng">THE BOOK OF ANSWERS</div>
                             </div>
@@ -370,7 +367,7 @@
         </svg>
     </div>
 
-    <!-- 【懸浮回饋按鈕】 -->
+    <!-- 【懸浮回饋按鈕】 (已移回右下角) -->
     <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">
         <svg viewBox="0 0 24 24">
             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
@@ -382,9 +379,11 @@
         <form class="feedback-card" action="https://formspree.io/f/xlgyvlvo" method="POST" id="formspreeForm" onclick="event.stopPropagation()">
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
             <h3>撰寫回饋</h3>
+            
             <label>留下您對解答之書的建議</label>
             <input type="hidden" name="發送時間" id="feedbackTime">
             <textarea name="回饋意見" id="feedbackMessage" rows="5" required placeholder="請輸入您的回饋內容..." onkeydown="handleEnterSubmit(event)"></textarea>
+            
             <button type="submit" class="feedback-btn" id="submitBtn">確認送出</button>
         </form>
     </div>
@@ -403,10 +402,11 @@
         let currentMode = 'classic'; // 'classic' 或 'love'
         let isDbLoaded = false; 
 
-        // 🚀 修正變數宣告，使其全域一致
+        // 兩組不同的資料庫
         let classicChTruths = [], classicEngTruths = [];
         let loveChTruths = [], loveEngTruths = [];
 
+        // 播放音效
         function playFlipSound() {
             const sound = document.getElementById('flipSound');
             if (sound) {
@@ -415,6 +415,7 @@
             }
         }
 
+        // 🌟 切換主題功能
         function switchTheme(mode) {
             if (currentMode === mode) return; 
 
@@ -447,6 +448,7 @@
             document.getElementById('engText').textContent = "";
         }
 
+        // 高畫質下載功能
         function saveAsImage(e) {
             e.stopPropagation(); 
             const innerPage = document.getElementById('innerPage');
@@ -458,14 +460,17 @@
 
             html2canvas(innerPage, {
                 useCORS: true,         
-                scale: 4,              
+                scale: 4,              /* 🚀 極致畫質：Scale調升為4 */
                 backgroundColor: "#fbf9f1" 
             }).then(canvas => {
                 innerPage.classList.remove('snapshot-mode');
                 const image = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
+                
+                // 下載檔名根據模式動態改變
                 let fileNamePrefix = currentMode === 'love' ? '愛的解答' : '解答之書';
                 link.download = `${fileNamePrefix}-${new Date().toLocaleDateString()}.png`;
+                
                 link.href = image;
                 link.click();
                 downloadBtn.setAttribute('title', originalTitle);
@@ -476,6 +481,7 @@
             });
         }
 
+        // 分享功能
         function shareAnswer(e) {
             e.stopPropagation(); 
             const chText = document.getElementById('chText').textContent;
@@ -497,6 +503,7 @@
             }
         }
 
+        // UI 彈窗控制
         function openFeedback(e) {
             e.stopPropagation(); 
             document.getElementById('feedbackModal').classList.add('active');
@@ -518,6 +525,7 @@
             }
         }
 
+        // Formspree 送出
         document.getElementById('formspreeForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const form = this;
@@ -542,11 +550,12 @@
             .finally(() => { btn.disabled = false; btn.textContent = "確認送出"; });
         });
 
-        // 🚀 強化型非同步加載函數，杜絕 Race Condition
         async function loadJsonArray(fileName) {
             try {
                 const response = await fetch(fileName);
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
                 const data = await response.json();
                 return Array.isArray(data.truth) ? data.truth : [];
             } catch (error) {
@@ -555,19 +564,24 @@
             }
         }
 
+        // 載入所有資料庫
         async function loadAllAnswers() {
-            // 🚀 直接指派給正確的全域變數，修正拼字不一致
             classicChTruths = await loadJsonArray('truth.json');
             classicEngTruths = await loadJsonArray('EngTruth.json');
             loveChTruths = await loadJsonArray('LoveTruth.json');
             loveEngTruths = await loadJsonArray('EngLoveTruth.json');
 
-            if (!classicChTruths.length || !classicEngTruths.length) console.error("經典解答庫載入失敗");
-            if (!loveChTruths.length || !loveEngTruths.length) console.warn("戀愛答案庫載入失敗，將自動執行命運尚未決定機制。");
+            if (!classicChTruths.length || !classicEngTruths.length) {
+                console.error("經典解答庫載入失敗");
+            }
+            if (!loveChTruths.length || !loveEngTruths.length) {
+                console.warn("戀愛答案庫未成功載入，請確認 JSON 檔案名稱與內容。", { loveChTruths, loveEngTruths });
+            }
             
             document.getElementById('chText').textContent = "";
         }
 
+        // 開關書本與抽取答案
         async function toggleBook() {
             const book = document.getElementById('magicBook');
             const frontCover = document.getElementById('frontCover');
@@ -579,18 +593,19 @@
 
             const isMobile = window.innerWidth <= 600;
 
-            // 🚀 安全檢查：如果開書時資料庫因為網路慢還沒好，強制等待它載入完畢
             if (!isDbLoaded) {
                 await loadAllAnswers();
                 isDbLoaded = true;
             }
 
+            // 根據當前模式選擇資料庫
             let currentChDb = currentMode === 'love' ? loveChTruths : classicChTruths;
             let currentEngDb = currentMode === 'love' ? loveEngTruths : classicEngTruths;
 
             if (!isOpen) {
                 playFlipSound();
                 
+                // 抽取答案：如果陣列是空的，自然 fallback 到 "命運尚未決定"
                 const minLength = Math.min(currentChDb.length, currentEngDb.length);
                 const randomIndex = minLength > 0 ? Math.floor(Math.random() * minLength) : -1;
                 
@@ -625,6 +640,7 @@
             }
         }
 
+        // 空白鍵控制
         window.addEventListener('keydown', function(e) {
             if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') return;
             if (e.key === ' ' || e.code === 'Space') {
@@ -633,7 +649,6 @@
             }
         });
 
-        // 🚀 頁面初始化載入
         window.addEventListener('DOMContentLoaded', () => {
             loadAllAnswers().then(() => {
                 isDbLoaded = true;
