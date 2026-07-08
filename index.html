@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>解答之書</title>
+    <!-- 線上載入專為書籍排版設計的思源宋體 (Noto Serif TC) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- 🚀 引入 html2canvas 套件，用來將網頁畫面轉成圖片下載 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         * {
@@ -278,8 +282,8 @@
             transform: rotateY(-170deg) !important;
         }
 
-        /* ==================== 4. 用戶回饋功能 ==================== */
-        /* 右下角懸浮按鈕：使用向量 SVG 圖示，防手機變彩色 Emoji */
+        /* ==================== 4. 用戶回饋與功能按鈕 ==================== */
+        /* 右下角懸浮按鈕（回饋信箱） */
         .feedback-fab {
             position: fixed;
             bottom: 25px;
@@ -311,6 +315,49 @@
         }
         
         .feedback-fab:hover svg {
+            fill: #1c1c1c;
+        }
+
+        /* 🚀 截圖儲存分享按鈕（預設隱藏，開書時才浮現） */
+        .share-fab {
+            position: fixed;
+            bottom: 85px; /* 排在信箱按鈕上方 */
+            right: 25px;
+            width: 48px;
+            height: 48px;
+            background-color: #1c1c1c;
+            border: 2px solid #BDA369;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            z-index: 999;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform: scale(0); /* 預設縮小隱藏 */
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .share-fab.active {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .share-fab svg {
+            width: 22px;
+            height: 22px;
+            fill: #BDA369;
+            transition: fill 0.3s ease;
+        }
+
+        .share-fab:hover {
+            background-color: #BDA369;
+        }
+
+        .share-fab:hover svg {
             fill: #1c1c1c;
         }
 
@@ -348,7 +395,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.8);
             position: relative;
             color: #fbf9f1;
-            /* 強制讓手機與電腦的所有文字同步套用思源宋體 */
             font-family: 'Noto Serif TC', serif !important;
         }
 
@@ -368,11 +414,10 @@
             color: rgba(251, 249, 241, 0.7);
         }
 
-        /* 強制讓手機版的輸入框與按鈕一律套用電腦版相同的思源宋體 */
         .feedback-card textarea, 
         .feedback-card button {
             font-family: 'Noto Serif TC', serif !important;
-            -webkit-appearance: none; /* 防止 iOS 行動網頁渲染出怪異的原生圓角風格 */
+            -webkit-appearance: none;
         }
 
         .feedback-card textarea {
@@ -573,9 +618,13 @@
 </head>
 <body tabindex="0">
 
+    <!-- 🚀 隱藏的音效播放器，預設載入同資料夾底下的 flip.mp3 -->
+    <audio id="flipSound" src="flip.mp3" preload="auto"></audio>
+
     <div class="scene">
         <div class="book" id="magicBook" onclick="toggleBook()">
             
+            <!-- 【1. 封面外殼】 -->
             <div class="page-component cover-wrapper" id="frontCover">
                 <div class="cover-front">
                     <div class="gold-pattern"></div>
@@ -589,6 +638,7 @@
                 <div class="cover-back-side"></div>
             </div>
 
+            <!-- 【2. 空白內頁】（截圖功能只會抓這個區塊，防背景穿幫） -->
             <div class="page-component inner-page-stay" id="innerPage">
                 <div class="answer-container" id="answerBox">
                     <div class="eng-text" id="engText"></div>
@@ -599,32 +649,42 @@
                 </div>
             </div>
 
+            <!-- 【3. 封底】 -->
             <div class="page-component cover-back"></div>
 
         </div>
     </div>
 
+    <!-- 🚀 【儲存圖片分享按鈕】相機圖示，開書時自動浮現 -->
+    <div class="share-fab" id="shareBtn" onclick="saveAsImage(event)" title="儲存解答圖片分享">
+        <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3.2"/>
+            <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-224-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+        </svg>
+    </div>
+
+    <!-- 【懸浮回饋按鈕】信箱圖示 -->
     <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">
         <svg viewBox="0 0 24 24">
             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
         </svg>
     </div>
 
+    <!-- 【彈出式回饋輸入視窗】整合您的 Formspree 連結 -->
     <div class="feedback-modal" id="feedbackModal" onclick="closeFeedback()">
         <form class="feedback-card" action="https://formspree.io/f/xlgyvlvo" method="POST" id="formspreeForm" onclick="event.stopPropagation()">
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
             <h3>撰寫回饋</h3>
             
             <label>留下您對解答之書的建議</label>
-            
             <input type="hidden" name="發送時間" id="feedbackTime">
-            
             <textarea name="回饋意見" id="feedbackMessage" rows="5" required placeholder="請輸入您的回饋內容..." onkeydown="handleEnterSubmit(event)"></textarea>
             
             <button type="submit" class="feedback-btn" id="submitBtn">確認送出</button>
         </form>
     </div>
 
+    <!-- 【自訂網頁原生提示窗】 -->
     <div class="feedback-modal" id="customAlertModal" onclick="closeCustomAlert()">
         <div class="feedback-card custom-alert-card" onclick="event.stopPropagation()">
             <h3 id="customAlertTitle">提示</h3>
@@ -637,6 +697,51 @@
         let isOpen = false;
         let chTruths = [];
         let engTruths = [];
+
+        // 音效播放控制
+        function playFlipSound() {
+            const sound = document.getElementById('flipSound');
+            if (sound) {
+                sound.currentTime = 0; // 每次播放都倒回最開頭
+                sound.play().catch(err => {
+                    // 瀏覽器安全防護：如果使用者完全沒點擊網頁就按空白鍵，可能會阻擋音效，這裡捕捉防抱錯
+                    console.log("音效播放被瀏覽器阻擋，需產生互動後才能播放:", err);
+                });
+            }
+        }
+
+        // 🚀 核心功能：將內頁轉換為圖片下載
+        function saveAsImage(e) {
+            e.stopPropagation(); // 防止點擊按鈕時觸發翻書
+            
+            const innerPage = document.getElementById('innerPage');
+            const shareBtn = document.getElementById('shareBtn');
+            
+            // 下載時先把按鈕文字改掉提示用戶
+            const originalTitle = shareBtn.getAttribute('title');
+            shareBtn.setAttribute('title', '產生圖片中...');
+
+            // 使用 html2canvas 只捕捉答案內頁（背景是好看的米白與古典框）
+            html2canvas(innerPage, {
+                useCORS: true,         // 允許跨網域載入字體
+                scale: 2,              // 放大兩倍，確保手機或視網膜螢幕下載下來超高畫質不模糊
+                backgroundColor: null  // 保持透明底
+            }).then(canvas => {
+                // 將畫布轉為 Base64 圖片網址
+                const image = canvas.toDataURL("image/png");
+                
+                // 建立一個虛擬的下載連結
+                const link = document.createElement('a');
+                link.download = `解答之書-${new Date().toLocaleDateString()}.png`;
+                link.href = image;
+                link.click();
+                
+                shareBtn.setAttribute('title', originalTitle);
+            }).catch(err => {
+                console.error("製圖失敗:", err);
+                showCustomAlert("提示", "圖片儲存失敗，請再試一次。");
+            });
+        }
 
         // 彈窗控制功能
         function openFeedback(e) {
@@ -664,24 +769,20 @@
         function handleEnterSubmit(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault(); 
-                
                 const form = document.getElementById('formspreeForm');
-                // 檢查是否有輸入文字，通過驗證後主動觸發 Submit 事件
                 if (form.reportValidity()) {
                     form.dispatchEvent(new Event('submit'));
                 }
             }
         }
 
-        // 🚀 使用 Ajax 異步處理 Formspree 表單提交，防止網頁跳轉，保留精美感謝視窗
+        // 使用 Ajax 異步處理 Formspree 表單提交
         document.getElementById('formspreeForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            
             const form = this;
             const messageInput = document.getElementById('feedbackMessage');
             const btn = document.getElementById('submitBtn');
             
-            // 送出前自動抓取當下台灣時間，寫入隱藏欄位
             const now = new Date();
             document.getElementById('feedbackTime').value = now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
             
@@ -691,16 +792,12 @@
             fetch(form.action, {
                 method: form.method,
                 body: new FormData(form),
-                headers: {
-                    'Accept': 'application/json'
-                }
+                headers: { 'Accept': 'application/json' }
             })
             .then(response => {
                 if (response.ok) {
-                    messageInput.value = ""; // 清空文字框
-                    closeFeedback();         // 關閉輸入窗
-                    
-                    // 自然親切的現代感謝詞
+                    messageInput.value = "";
+                    closeFeedback();
                     showCustomAlert("送出成功", "非常感謝您的回饋！我們會繼續加油，讓解答之書變得更好！");
                 } else {
                     showCustomAlert("提示", "發送好像有點問題，請稍後再試。");
@@ -723,13 +820,10 @@
                     fetch('truth.json'),
                     fetch('EngTruth.json')
                 ]);
-                
                 const chData = await chRes.json();
                 const engData = await engRes.json();
-                
                 chTruths = chData.truth;
                 engTruths = engData.truth;
-
                 document.getElementById('chText').textContent = "";
             } catch (error) {
                 console.error("讀取 JSON 檔案失敗：", error);
@@ -742,6 +836,7 @@
             const frontCover = document.getElementById('frontCover');
             const innerPage = document.getElementById('innerPage');
             const answerBox = document.getElementById('answerBox');
+            const shareBtn = document.getElementById('shareBtn');
 
             const isMobile = window.innerWidth <= 600;
 
@@ -749,27 +844,30 @@
                 await loadAllAnswers();
             }
 
+            // 🚀 只要點擊開書或關書，一律觸發翻書音效
+            playFlipSound();
+
             if (!isOpen) {
                 if (chTruths.length > 0 && engTruths.length > 0) {
                     const minLength = Math.min(chTruths.length, engTruths.length);
                     const randomIndex = Math.floor(Math.random() * minLength);
-                    
                     document.getElementById('engText').textContent = engTruths[randomIndex];
                     document.getElementById('chText').textContent = chTruths[randomIndex];
                 }
 
                 if (isMobile) {
                     innerPage.classList.add('mobile-active');
-                    answerBox.classList.add('show-text');
+                    answerPageShowLogic();
                 } else {
                     book.classList.add('open-book');
                     frontCover.classList.add('flipped');
-                    setTimeout(() => {
-                        answerBox.classList.add('show-text');
-                    }, 300);
+                    setTimeout(() => { answerPageShowLogic(); }, 300);
                 }
                 isOpen = true;
             } else {
+                // 關書時，儲存按鈕立刻收合
+                shareBtn.classList.remove('active');
+
                 if (isMobile) {
                     answerBox.classList.remove('show-text');
                     innerPage.classList.remove('mobile-active');
@@ -781,6 +879,12 @@
                     }, 100);
                 }
                 isOpen = false;
+            }
+
+            // 輔助函式：當內頁顯示時，把儲存按鈕叫出來
+            function answerPageShowLogic() {
+                answerBox.classList.add('show-text');
+                shareBtn.classList.add('active'); // 顯示儲存按鈕
             }
         }
 
