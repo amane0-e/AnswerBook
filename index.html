@@ -40,6 +40,7 @@
             justify-content: center;
             width: 100%;
             height: 100%;
+            position: relative; /* 讓手機版絕對定位按鈕以此為基準點 */
         }
 
         /* 3D 場景容器 */
@@ -286,17 +287,20 @@
         }
 
         .show-text {
-            opacity: 1;
+            opacity: 1 !important;
         }
 
-        /* 📱手機行動版專屬：位於書頁外部下方的雙按鈕控制區 */
+        /* 📱手機行動版專屬：改為【絕對定位】掛在主容器下方，避免干擾主排版、引發位移 */
         .mobile-action-group {
             display: none;
+            position: absolute;
+            bottom: calc((100dvh - 60dvh) / 4 - 35px); /* 計算出最均勻平整的安全定位，徹底避免上移 */
+            left: 50%;
+            transform: translateX(-50%);
             width: 88vw;
             max-width: 380px;
             justify-content: space-between;
             gap: 15px;
-            margin-top: 25px;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
@@ -454,47 +458,21 @@
             bottom: 85px; 
         }
 
-        /* 🚀 完美重現指定圖示：加粗、圓潤的弧形右轉箭頭 */
-        .share-icon-curved {
-            position: relative;
-            width: 25px;
-            height: 25px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* 🚀 究極優化：完美純向量 SVG 右彎分享箭頭 */
+        .share-icon-svg {
+            width: 22px;
+            height: 22px;
         }
-        /* 箭頭主體路徑 */
-        .share-icon-curved::before {
-            content: "";
-            position: absolute;
-            width: 14px;
-            height: 14px;
-            border-top: 4.5px solid #BDA369;
-            border-right: 4.5px solid #BDA369;
-            border-top-right-radius: 3px;
-            transform: rotate(45deg);
-            top: 2px;
-            right: 0px;
-            transition: border-color 0.3s ease;
+        .share-icon-svg path {
+            fill: none;
+            stroke: #BDA369;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: stroke 0.3s ease;
         }
-        /* 底層下彎尾巴 */
-        .share-icon-curved::after {
-            content: "";
-            position: absolute;
-            width: 17px;
-            height: 17px;
-            border-left: 4.5px solid #BDA369;
-            border-top: 4.5px solid #BDA369;
-            border-top-left-radius: 12px;
-            transform: rotate(45deg);
-            bottom: 1px;
-            left: -1px;
-            transition: border-color 0.3s ease;
-        }
-        /* 滑過按鈕時，將自製圖示改為黑線 */
-        .desktop-fab:hover .share-icon-curved::before,
-        .desktop-fab:hover .share-icon-curved::after {
-            border-color: #111111;
+        .desktop-fab:hover .share-icon-svg path {
+            stroke: #1c1c1c;
         }
 
         /* 彈出式遮罩 */
@@ -668,6 +646,14 @@
                 top: 0 !important;
                 left: 0 !important;
                 transform-origin: center center !important; 
+                transition: opacity 0.35s cubic-bezier(0.25, 1, 0.5, 1) !important;
+            }
+
+            /* 手機掀開時，直接淡出封面露出底層答案 */
+            .cover-wrapper.flipped {
+                transform: none !important;
+                opacity: 0 !important;
+                pointer-events: none !important;
             }
 
             .page-component {
@@ -705,6 +691,7 @@
                 margin-top: 5px !important;
             }
 
+            /* 預先載入，徹底解決閃爍問題 */
             .inner-page-stay {
                 width: 100% !important;
                 margin-left: 0 !important;
@@ -712,9 +699,7 @@
                 box-shadow: 0 15px 40px rgba(0,0,0,0.5) !important;
                 background-image: none !important; 
                 padding: 30px !important; 
-                opacity: 0;
-                pointer-events: none;
-                transition: opacity 0.3s ease;
+                z-index: 4; /* 置於封面之下，避免閃爍與延遲 */
             }
 
             .inner-page-stay.snapshot-mode {
@@ -729,16 +714,11 @@
                 right: 15px;
                 outline-offset: -5px;
             }
-            
-            .inner-page-stay.mobile-active {
-                opacity: 1;
-                pointer-events: auto;
-                z-index: 12; 
-            }
 
             .answer-container {
                 max-width: 85% !important;
                 gap: 12px !important;
+                opacity: 1 !important; /* 答案始終保持實體，由封面不透明度控制，杜絕肉眼白閃 */
             }
 
             .eng-text {
@@ -805,7 +785,7 @@
             </div>
         </div>
 
-        <!-- 📱【手機版雙按鈕區】 -->
+        <!-- 📱【手機版雙按鈕區】🚀 改成 Absolute 絕對定位，不管開或關都不會擠壓到書本的垂直位置！ -->
         <div class="mobile-action-group" id="mobileActionGroup">
             <button type="button" class="mobile-action-btn btn-download-gold" onclick="saveAsImage(event)">下載答案</button>
             <button type="button" class="mobile-action-btn btn-share-black" onclick="shareAnswer(event)">分享答案</button>
@@ -821,9 +801,13 @@
         </svg>
     </div>
 
-    <!-- 💻【電腦版功能按鈕 - 分享】🚀 換成 100% 擬真右轉彎分享箭頭樣式 -->
+    <!-- 💻【電腦版功能按鈕 - 分享】🚀 換成 100% 精準的純 SVG 圓潤經典右彎分享箭頭圖示 -->
     <div class="desktop-fab share-fab" id="shareBtn" onclick="shareAnswer(event)" title="分享解答文字">
-        <div class="share-icon-curved"></div>
+        <svg class="share-icon-svg" viewBox="0 0 24 24">
+            <!-- 運用完美對稱與弧度，重現高質感箭頭 -->
+            <path d="M15 3l7 6-7 6" />
+            <path d="M2 21v-3a7 7 0 0 1 7-7h13" />
+        </svg>
     </div>
 
     <!-- 【懸浮回饋按鈕】 -->
@@ -1027,22 +1011,22 @@
                         shareBtn.classList.add('active');
                     }, 400);
                 } else {
-                    innerPage.classList.add('mobile-active');
-                    answerBox.classList.add('show-text');
+                    // 🚀 手機優化：先加上 flipped (淡出封面)，按鈕同步現形，答案已在底下就位，零閃爍
+                    frontCover.classList.add('flipped');
                     mobileActionGroup.classList.add('active');
                 }
                 isOpen = true;
             } else {
                 playFlipSound();
-                answerBox.classList.remove('show-text');
                 
                 if (!isMobile) {
+                    answerBox.classList.remove('show-text');
                     downloadBtn.classList.remove('active');
                     shareBtn.classList.remove('active');
                     frontCover.classList.remove('flipped');
                 } else {
                     mobileActionGroup.classList.remove('active');
-                    innerPage.classList.remove('mobile-active');
+                    frontCover.classList.remove('flipped');
                 }
                 isOpen = false;
             }
