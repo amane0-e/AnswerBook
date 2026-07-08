@@ -299,9 +299,9 @@
             .desktop-fab { display: none !important; }
             .cover-back-side, .cover-back { display: none !important; }
 
-            /* 🚀 【完美黃金平衡點】改用相對數值百分比控制，確保雙按鈕能精準貼在內頁正下方，同時不與底部信件按鈕重疊！ */
+            /* 🚀 【完美微調】改用「- 20px」，將手機版控制按鈕精確向下壓，使其剛好完美緊貼在內頁的正下方，同時維持在信箱按鈕上方！ */
             .mobile-action-group {
-                bottom: 15% !important;
+                bottom: calc((100dvh - 60dvh) / 4 - 20px) !important;
             }
         }
     </style>
