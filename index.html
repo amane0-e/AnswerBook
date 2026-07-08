@@ -161,8 +161,8 @@
         .gold-pattern {
             width: 100%; height: 100%; position: relative;
             background-color: var(--theme-gold);
-            -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none" stroke="white" stroke-width="3"><rect x="15" y="15" width="370" height="470" rx="4" stroke-width="4"/><rect x="25" y="25" width="350" height="450" rx="2" stroke-width="1.5"/><path d="M15,45 Q45,45 45,15 M385,45 Q355,45 355,15 M15,455 Q45,455 45,485 M385,455 Q355,455 355,485"/><path d="M160,22 L170,17 L230,17 L240,22 L230,27 L170,27 Z M160,478 L170,473 L230,473 L240,478 L230,483 L170,483 Z"/><path d="M22,160 L17,170 L17,230 L22,240 L27,230 L27,170 Z M378,160 L373,170 L373,230 L378,240 L383,230 L383,170 Z"/></svg>');
-            mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none" stroke="white" stroke-width="3"><rect x="15" y="15" width="370" height="470" rx="4" stroke-width="4"/><rect x="25" y="25" width="350" height="450" rx="2" stroke-width="1.5"/><path d="M15,45 Q45,45 45,15 M385,45 Q355,45 355,15 M15,455 Q45,455 45,485 M385,455 Q355,455 355,485"/><path d="M160,22 L170,17 L230,17 L240,22 L230,27 L170,27 Z M160,478 L170,473 L230,473 L240,478 L230,483 L170,483 Z"/><path d="M22,160 L17,170 L17,230 L22,240 L27,230 L27,170 Z M378,160 L373,170 L373,230 L378,240 Schuyler/383,230 L383,170 Z"/></svg>');
+            -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none" stroke="white" stroke-width="3"><rect x="15" y="15" width="370" height="470" rx="4" stroke-width="4"/><rect x="25" y="25" width="350" height="450" rx="2" stroke-width="1.5"/><path d="M15,45 Q45,45 45,15 M385,45 Q355,45 355,15 M15,455 Q45,455 45,485 M385,455 Q355,455 355,485"/><path d="M160,22 L170,17 L230,17 L240,22 L230,27 L170,27 Z M160,478 L170,473 L230,473 L240,478 L230,483 L170,483 Z"/><path d="M22,160 L17,170 L17,230 L22,240 L27,230 L27,170 Z M378,160 L373,170 Schuyler/373,230 L378,240 L383,230 L383,170 Z"/></svg>');
+            mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500" fill="none" stroke="white" stroke-width="3"><rect x="15" y="15" width="370" height="470" rx="4" stroke-width="4"/><rect x="25" y="25" width="350" height="450" rx="2" stroke-width="1.5"/><path d="M15,45 Q45,45 45,15 M385,45 Q355,45 355,15 M15,455 Q45,455 45,485 M385,455 Q355,455 355,485"/><path d="M160,22 L170,17 L230,17 L240,22 L230,27 L170,27 Z M160,478 L170,473 L230,473 L240,478 Schuyler/230,483 L170,483 Z"/><path d="M22,160 L17,170 L17,230 L22,240 L27,230 L27,170 Z M378,160 L373,170 L373,230 L378,240 L383,230 L383,170 Z"/></svg>');
             -webkit-mask-size: 100% 100%; mask-size: 100% 100%; display: flex; justify-content: center; align-items: center;
         }
 
@@ -203,7 +203,7 @@
         .cover-back { background: #0d0d0d; border-radius: 0 16px 16px 0; z-index: 1; }
         .flipped { transform: rotateY(-160deg) !important; }
 
-        /* 手機按鈕 */
+        /* 手機按鈕預設基礎結構 */
         .mobile-action-group {
             display: none; position: absolute; bottom: calc((100dvh - 60dvh) / 4 - 35px); left: 50%; transform: translateX(-50%); width: 88vw; max-width: 380px; justify-content: space-between; gap: 15px; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; z-index: 100;
         }
@@ -299,9 +299,9 @@
             .desktop-fab { display: none !important; }
             .cover-back-side, .cover-back { display: none !important; }
 
-            /* 🚀 【全新微調】將手機行動版雙按鈕的高度往上調整（從原本的 -35px 改為 -75px），完美錯開並防止被回饋按鈕阻擋！ */
+            /* 🚀 【完美往上推】改用「+ 35px」將手機版控制按鈕往上拉，使其完美浮在信箱按鈕上方，再也不會疊到！ */
             .mobile-action-group {
-                bottom: calc((100dvh - 60dvh) / 4 - 75px);
+                bottom: calc((100dvh - 60dvh) / 4 + 35px);
             }
         }
     </style>
