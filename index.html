@@ -178,6 +178,7 @@
             z-index: 5;
             transform: rotateY(0deg);
             display: flex;
+            flex-direction: column; /* 讓內文與下方內嵌按鈕垂直排列 */
             justify-content: center;
             align-items: center; 
             padding: 35px; 
@@ -185,6 +186,20 @@
             background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
             position: relative;
+        }
+
+        /* 當進行截圖時，動態移除雜質 */
+        .inner-page-stay.snapshot-mode {
+            background-image: none !important;
+            box-shadow: none !important;
+            border-radius: 14px !important; 
+            margin-left: 0 !important;
+            width: 100% !important;
+        }
+
+        /* 手機截圖時要把內嵌的「下載答案」按鈕藏起來，以免被印在圖片中 */
+        .inner-page-stay.snapshot-mode .mobile-inline-download-btn {
+            display: none !important;
         }
 
         /* 內頁古典細邊框設計 */
@@ -266,6 +281,31 @@
             font-weight: 600;
         }
 
+        /* 📱手機行動版專屬：內嵌於書頁底部的金色橢圓按鈕（預設不顯示，僅在手機尺寸啟用） */
+        .mobile-inline-download-btn {
+            display: none;
+            background-color: #BDA369;
+            color: #1c1c1c;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 50px; /* 完美橢圓 */
+            font-family: 'Noto Serif TC', serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(189, 163, 105, 0.3);
+            margin-top: 30px;
+            z-index: 10;
+            transition: all 0.2s ease;
+            -webkit-appearance: none;
+        }
+        
+        .mobile-inline-download-btn:active {
+            transform: scale(0.96);
+            background-color: #a8905b;
+        }
+
         .show-text {
             opacity: 1;
         }
@@ -318,10 +358,10 @@
             fill: #1c1c1c;
         }
 
-        /* 🚀 截圖儲存分享按鈕（預設隱藏，開書時才浮現） */
+        /* 🚀 桌機網頁版：儲存下載懸浮按鈕（向下箭頭+橫線） */
         .share-fab {
             position: fixed;
-            bottom: 85px; /* 排在信箱按鈕上方 */
+            bottom: 85px; 
             right: 25px;
             width: 48px;
             height: 48px;
@@ -335,7 +375,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             z-index: 999;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform: scale(0); /* 預設縮小隱藏 */
+            transform: scale(0); 
             opacity: 0;
             pointer-events: none;
         }
@@ -349,8 +389,12 @@
         .share-fab svg {
             width: 22px;
             height: 22px;
-            fill: #BDA369;
-            transition: fill 0.3s ease;
+            stroke: #BDA369;
+            stroke-width: 2.5; 
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+            transition: stroke 0.3s ease;
         }
 
         .share-fab:hover {
@@ -358,7 +402,7 @@
         }
 
         .share-fab:hover svg {
-            fill: #1c1c1c;
+            stroke: #1c1c1c; 
         }
 
         /* 彈出式遮罩 */
@@ -577,6 +621,17 @@
                 transition: opacity 0.3s ease;
             }
 
+            /* 手機啟用內嵌的金色下載按鈕 */
+            .mobile-inline-download-btn {
+                display: block !important;
+            }
+
+            /* 手機截圖同步移除陰影 */
+            .inner-page-stay.snapshot-mode {
+                box-shadow: none !important;
+                border-radius: 12px !important;
+            }
+
             .inner-page-stay::before {
                 top: 15px;
                 bottom: 15px;
@@ -610,6 +665,11 @@
                 letter-spacing: 3px !important;
             }
 
+            /* 📱 手機版直接強制隱藏右下角的懸浮下載 icon */
+            .share-fab {
+                display: none !important;
+            }
+
             .cover-back-side, .cover-back {
                 display: none !important;
             }
@@ -618,7 +678,7 @@
 </head>
 <body tabindex="0">
 
-    <!-- 🚀 隱藏的音效播放器，預設載入同資料夾底下的 flip.mp3 -->
+    <!-- 隱藏的音效播放器 -->
     <audio id="flipSound" src="flip.mp3" preload="auto"></audio>
 
     <div class="scene">
@@ -638,8 +698,9 @@
                 <div class="cover-back-side"></div>
             </div>
 
-            <!-- 【2. 空白內頁】（截圖功能只會抓這個區塊，防背景穿幫） -->
+            <!-- 【2. 空白內頁】 -->
             <div class="page-component inner-page-stay" id="innerPage">
+                <!-- 答案內文區 -->
                 <div class="answer-container" id="answerBox">
                     <div class="eng-text" id="engText"></div>
                     <div class="decor-line">
@@ -647,6 +708,9 @@
                     </div>
                     <div class="ch-text" id="chText">載入中...</div>
                 </div>
+
+                <!-- 📱手機專屬：內嵌於書頁下方的金色橢圓按鈕（點擊時阻止冒泡，避免點到按鈕反而把書蓋上） -->
+                <button type="button" class="mobile-inline-download-btn" onclick="saveAsImage(event)">下載答案</button>
             </div>
 
             <!-- 【3. 封底】 -->
@@ -655,11 +719,11 @@
         </div>
     </div>
 
-    <!-- 🚀 【儲存圖片分享按鈕】相機圖示，開書時自動浮現 -->
+    <!-- 💻【電腦版：右下角懸浮下載按鈕】（在手機版會被 CSS 自動隱藏） -->
     <div class="share-fab" id="shareBtn" onclick="saveAsImage(event)" title="儲存解答圖片分享">
         <svg viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="3.2"/>
-            <path d="M9 2L7.17 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-3.17L15 2H9zm3 15c-2.76 0-5-224-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5z"/>
+            <path d="M12 3v13M19 10l-7 7-7-7" />
+            <path d="M4 21h16" />
         </svg>
     </div>
 
@@ -670,7 +734,7 @@
         </svg>
     </div>
 
-    <!-- 【彈出式回饋輸入視窗】整合您的 Formspree 連結 -->
+    <!-- 【彈出式回饋輸入視窗】 -->
     <div class="feedback-modal" id="feedbackModal" onclick="closeFeedback()">
         <form class="feedback-card" action="https://formspree.io/f/xlgyvlvo" method="POST" id="formspreeForm" onclick="event.stopPropagation()">
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
@@ -698,39 +762,36 @@
         let chTruths = [];
         let engTruths = [];
 
-        // 音效播放控制
         function playFlipSound() {
             const sound = document.getElementById('flipSound');
             if (sound) {
-                sound.currentTime = 0; // 每次播放都倒回最開頭
+                sound.currentTime = 0; 
                 sound.play().catch(err => {
-                    // 瀏覽器安全防護：如果使用者完全沒點擊網頁就按空白鍵，可能會阻擋音效，這裡捕捉防抱錯
-                    console.log("音效播放被瀏覽器阻擋，需產生互動後才能播放:", err);
+                    console.log("音效播放被瀏覽器阻擋:", err);
                 });
             }
         }
 
-        // 🚀 核心功能：將內頁轉換為圖片下載
         function saveAsImage(e) {
-            e.stopPropagation(); // 防止點擊按鈕時觸發翻書
+            e.stopPropagation(); // 🚀 關鍵：防止事件冒泡回傳給 .book，避免點按鈕時書本被關閉
             
             const innerPage = document.getElementById('innerPage');
             const shareBtn = document.getElementById('shareBtn');
             
-            // 下載時先把按鈕文字改掉提示用戶
             const originalTitle = shareBtn.getAttribute('title');
             shareBtn.setAttribute('title', '產生圖片中...');
 
-            // 使用 html2canvas 只捕捉答案內頁（背景是好看的米白與古典框）
+            innerPage.classList.add('snapshot-mode');
+
             html2canvas(innerPage, {
-                useCORS: true,         // 允許跨網域載入字體
-                scale: 2,              // 放大兩倍，確保手機或視網膜螢幕下載下來超高畫質不模糊
-                backgroundColor: null  // 保持透明底
+                useCORS: true,         
+                scale: 2,              
+                backgroundColor: "#fbf9f1" 
             }).then(canvas => {
-                // 將畫布轉為 Base64 圖片網址
+                innerPage.classList.remove('snapshot-mode');
+
                 const image = canvas.toDataURL("image/png");
                 
-                // 建立一個虛擬的下載連結
                 const link = document.createElement('a');
                 link.download = `解答之書-${new Date().toLocaleDateString()}.png`;
                 link.href = image;
@@ -738,12 +799,12 @@
                 
                 shareBtn.setAttribute('title', originalTitle);
             }).catch(err => {
+                innerPage.classList.remove('snapshot-mode');
                 console.error("製圖失敗:", err);
                 showCustomAlert("提示", "圖片儲存失敗，請再試一次。");
             });
         }
 
-        // 彈窗控制功能
         function openFeedback(e) {
             e.stopPropagation(); 
             document.getElementById('feedbackModal').classList.add('active');
@@ -754,7 +815,6 @@
             document.getElementById('feedbackModal').classList.remove('active');
         }
 
-        // 顯示提示框
         function showCustomAlert(title, text) {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertText').textContent = text;
@@ -765,7 +825,6 @@
             document.getElementById('customAlertModal').classList.remove('active');
         }
 
-        // 監聽 Enter 鍵直接發送表單（Shift+Enter 換行）
         function handleEnterSubmit(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault(); 
@@ -776,7 +835,6 @@
             }
         }
 
-        // 使用 Ajax 異步處理 Formspree 表單提交
         document.getElementById('formspreeForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const form = this;
@@ -813,7 +871,6 @@
             });
         });
 
-        // 讀取外部資料夾的 truth.json 與 EngTruth.json
         async function loadAllAnswers() {
             try {
                 const [chRes, engRes] = await Promise.all([
@@ -844,7 +901,6 @@
                 await loadAllAnswers();
             }
 
-            // 🚀 只要點擊開書或關書，一律觸發翻書音效
             playFlipSound();
 
             if (!isOpen) {
@@ -865,7 +921,6 @@
                 }
                 isOpen = true;
             } else {
-                // 關書時，儲存按鈕立刻收合
                 shareBtn.classList.remove('active');
 
                 if (isMobile) {
@@ -881,10 +936,11 @@
                 isOpen = false;
             }
 
-            // 輔助函式：當內頁顯示時，把儲存按鈕叫出來
             function answerPageShowLogic() {
                 answerBox.classList.add('show-text');
-                shareBtn.classList.add('active'); // 顯示儲存按鈕
+                if (!isMobile) {
+                    shareBtn.classList.add('active'); 
+                }
             }
         }
 
