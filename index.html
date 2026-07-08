@@ -550,28 +550,35 @@
             .finally(() => { btn.disabled = false; btn.textContent = "確認送出"; });
         });
 
+        async function loadJsonArray(fileNames) {
+            for (const fileName of fileNames) {
+                try {
+                    const response = await fetch(new URL(fileName, window.location.href));
+                    if (!response.ok) continue;
+
+                    const data = await response.json();
+                    if (data && Array.isArray(data.truth)) {
+                        return data.truth;
+                    }
+                } catch (error) {
+                    console.warn(`載入 ${fileName} 失敗`, error);
+                }
+            }
+            return [];
+        }
+
         // 載入所有資料庫
         async function loadAllAnswers() {
-            // 載入經典解答
-            try {
-                const [chRes, engRes] = await Promise.all([ fetch('truth.json'), fetch('EngTruth.json') ]);
-                classicChTruths = (await chRes.json()).truth || [];
-                classicEngTruths = (await engRes.json()).truth || [];
-            } catch (error) {
-                console.error("經典解答庫載入失敗", error);
-                classicChTruths = [];
-                classicEngTruths = [];
-            }
+            classicChTruths = await loadJsonArray(['truth.json']);
+            classicEngTruths = await loadJsonArray(['EngTruth.json']);
+            loveChTruths = await loadJsonArray(['LoveTruth.json', 'love_truth.json', 'loveTruth.json']);
+            loveEngTruths = await loadJsonArray(['EngLoveTruth.json', 'love_EngTruth.json', 'engLoveTruth.json']);
 
-            // 載入戀愛解答 
-            try {
-                const [loveChRes, loveEngRes] = await Promise.all([ fetch('LoveTruth.json'), fetch('EngLoveTruth.json') ]);
-                loveChTruths = (await loveChRes.json()).truth || [];
-                loveEngTruths = (await loveEngRes.json()).truth || [];
-            } catch (error) {
-                console.warn("未找到戀愛答案庫。", error);
-                loveChTruths = [];
-                loveEngTruths = [];
+            if (!classicChTruths.length || !classicEngTruths.length) {
+                console.error("經典解答庫載入失敗");
+            }
+            if (!loveChTruths.length || !loveEngTruths.length) {
+                console.warn("戀愛答案庫未成功載入，請確認 JSON 檔案名稱與內容。", { loveChTruths, loveEngTruths });
             }
             
             document.getElementById('chText').textContent = "";
