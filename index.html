@@ -32,7 +32,7 @@
             font-family: 'Noto Serif TC', serif;
         }
 
-        /* 主包裝容器：負責在手機版將書本與下方的按鈕垂直排列 */
+        /* 主包裝容器 */
         .main-wrapper {
             display: flex;
             flex-direction: column;
@@ -53,7 +53,7 @@
             align-items: center;
         }
 
-        /* 書本主體 */
+        /* 書本主體：使其在原地，不進行 X 軸位移 */
         .book {
             width: 100%;
             height: 100%;
@@ -63,11 +63,6 @@
             cursor: pointer;
         }
 
-        /* 打開時書本右移置中 */
-        .book.open-book {
-            transform: translateX(50%);
-        }
-
         /* 預設為絕對定位重疊 */
         .page-component {
             position: absolute;
@@ -75,7 +70,6 @@
             height: 100%;
             top: 0;
             left: 0;
-            transform-origin: left center;
         }
 
         /* ==================== 1. 雙面複合封面外殼 ==================== */
@@ -86,6 +80,8 @@
             left: -3px;
             z-index: 10;
             transform-style: preserve-3d;
+            /* 設定旋轉軸心在左側，使其像開門一樣往左翻開 */
+            transform-origin: left center;
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
@@ -154,6 +150,8 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            text-align: center;
+            width: 100%;
         }
 
         /* 書名 */
@@ -162,6 +160,7 @@
             color: #BDA369;
             font-size: 3.8rem; 
             letter-spacing: 14px;
+            text-indent: 14px; 
             text-align: center;
             line-height: 1.6;
             text-shadow: 3px 3px 6px rgba(0,0,0,0.9), 0 0 15px rgba(189, 163, 105, 0.3);
@@ -174,7 +173,9 @@
             font-size: 1.3rem; 
             color: #BDA369; 
             letter-spacing: 3px;
+            text-indent: 3px; 
             margin-top: 15px;
+            text-align: center;
             text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
             opacity: 0.85;
         }
@@ -186,13 +187,12 @@
             margin-left: 2px;
             border-radius: 0 14px 14px 0;
             z-index: 5;
-            transform: rotateY(0deg);
             display: flex;
             justify-content: center;
             align-items: center; 
             padding: 35px; 
             overflow: hidden; 
-            background-image: linear-gradient(to right, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
+            background-image: linear-gradient(to right, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.02) 6%, rgba(255,255,255,0.5) 9%, rgba(0,0,0,0) 15%);
             box-shadow: 5px 5px 30px rgba(0,0,0,0.4);
             position: relative;
         }
@@ -289,7 +289,7 @@
             opacity: 1;
         }
 
-        /* 📱手機行動版專屬：位於書頁外部下方的雙按鈕控制區（預設隱藏，僅在手機尺寸且翻開時動態出現） */
+        /* 📱手機行動版專屬：位於書頁外部下方的雙按鈕控制區 */
         .mobile-action-group {
             display: none;
             width: 88vw;
@@ -309,7 +309,6 @@
             pointer-events: auto;
         }
 
-        /* 共同按鈕基礎樣式：兩顆等寬、等高、完美橢圓 */
         .mobile-action-btn {
             flex: 1;
             height: 44px;
@@ -327,7 +326,6 @@
             border: none;
         }
 
-        /* 1. 金底黑字橢圓按鈕（下載答案） */
         .btn-download-gold {
             background-color: #BDA369;
             color: #111111;
@@ -339,7 +337,6 @@
             background-color: #a8905b;
         }
 
-        /* 2. 金邊黑色橢圓按鈕（分享答案） */
         .btn-share-black {
             background-color: #1c1c1c;
             color: #BDA369;
@@ -359,9 +356,9 @@
             z-index: 1;
         }
 
-        /* 翻開狀態動畫 */
+        /* 翻開狀態動畫：封面外殼沿著左側原點直接向左翻開 */
         .flipped {
-            transform: rotateY(-170deg) !important;
+            transform: rotateY(-160deg) !important;
         }
 
         /* ==================== 4. 用戶回饋與功能按鈕 ==================== */
@@ -400,10 +397,9 @@
             fill: #1c1c1c;
         }
 
-        /* 🚀 桌機網頁版：儲存下載懸浮按鈕（向下箭頭+橫線） */
-        .share-fab {
+        /* 💻 桌機網頁版功能按鈕共通基礎樣式 */
+        .desktop-fab {
             position: fixed;
-            bottom: 85px; 
             right: 25px;
             width: 48px;
             height: 48px;
@@ -422,29 +418,83 @@
             pointer-events: none;
         }
 
-        .share-fab.active {
+        .desktop-fab.active {
             transform: scale(1);
             opacity: 1;
             pointer-events: auto;
         }
 
-        .share-fab svg {
-            width: 22px;
-            height: 22px;
+        /* 預設 SVG 設定 */
+        .desktop-fab svg {
+            width: 24px;
+            height: 24px;
             stroke: #BDA369;
-            stroke-width: 2.5; 
+            stroke-width: 2.8; 
             stroke-linecap: round;
             stroke-linejoin: round;
             fill: none;
             transition: stroke 0.3s ease;
         }
 
-        .share-fab:hover {
+        .desktop-fab:hover {
             background-color: #BDA369;
         }
 
-        .share-fab:hover svg {
+        .desktop-fab:hover svg {
             stroke: #1c1c1c; 
+        }
+
+        /* 儲存下載懸浮按鈕定位 */
+        .download-fab {
+            bottom: 145px; 
+        }
+
+        /* 分享懸浮按鈕定位 */
+        .share-fab {
+            bottom: 85px; 
+        }
+
+        /* 🚀 完美重現指定圖示：加粗、圓潤的弧形右轉箭頭 */
+        .share-icon-curved {
+            position: relative;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        /* 箭頭主體路徑 */
+        .share-icon-curved::before {
+            content: "";
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            border-top: 4.5px solid #BDA369;
+            border-right: 4.5px solid #BDA369;
+            border-top-right-radius: 3px;
+            transform: rotate(45deg);
+            top: 2px;
+            right: 0px;
+            transition: border-color 0.3s ease;
+        }
+        /* 底層下彎尾巴 */
+        .share-icon-curved::after {
+            content: "";
+            position: absolute;
+            width: 17px;
+            height: 17px;
+            border-left: 4.5px solid #BDA369;
+            border-top: 4.5px solid #BDA369;
+            border-top-left-radius: 12px;
+            transform: rotate(45deg);
+            bottom: 1px;
+            left: -1px;
+            transition: border-color 0.3s ease;
+        }
+        /* 滑過按鈕時，將自製圖示改為黑線 */
+        .desktop-fab:hover .share-icon-curved::before,
+        .desktop-fab:hover .share-icon-curved::after {
+            border-color: #111111;
         }
 
         /* 彈出式遮罩 */
@@ -600,7 +650,7 @@
                 width: 88vw !important; 
                 max-width: 380px !important; 
                 height: auto !important;
-                max-height: 60dvh !important; /* 壓縮高度保留空間給下方按鈕組 */
+                max-height: 60dvh !important; 
                 aspect-ratio: 4 / 5 !important; 
                 margin: 0 !important; 
                 position: relative !important;
@@ -617,6 +667,7 @@
                 height: 100% !important;
                 top: 0 !important;
                 left: 0 !important;
+                transform-origin: center center !important; 
             }
 
             .page-component {
@@ -643,11 +694,14 @@
             .book-title {
                 font-size: 2.2rem !important; 
                 letter-spacing: 6px !important;
+                text-indent: 6px !important;
                 line-height: 1.5 !important;
             }
 
             .book-subtitle {
                 font-size: 0.8rem !important;
+                letter-spacing: 2px !important;
+                text-indent: 2px !important;
                 margin-top: 5px !important;
             }
 
@@ -663,7 +717,6 @@
                 transition: opacity 0.3s ease;
             }
 
-            /* 手機截圖同步移除陰影 */
             .inner-page-stay.snapshot-mode {
                 box-shadow: none !important;
                 border-radius: 12px !important;
@@ -702,8 +755,7 @@
                 letter-spacing: 3px !important;
             }
 
-            /* 📱 手機版直接強制隱藏右下角的懸浮下載 icon */
-            .share-fab {
+            .desktop-fab {
                 display: none !important;
             }
 
@@ -715,13 +767,10 @@
 </head>
 <body tabindex="0">
 
-    <!-- 隱藏的音效播放器 -->
     <audio id="flipSound" src="flip.mp3" preload="auto"></audio>
 
-    <!-- 【主包裝容器】 -->
     <div class="main-wrapper">
         
-        <!-- 【3D 書本場景】 -->
         <div class="scene">
             <div class="book" id="magicBook" onclick="toggleBook()">
                 
@@ -741,7 +790,6 @@
 
                 <!-- 【2. 空白內頁】 -->
                 <div class="page-component inner-page-stay" id="innerPage">
-                    <!-- 答案內文區 -->
                     <div class="answer-container" id="answerBox">
                         <div class="eng-text" id="engText"></div>
                         <div class="decor-line">
@@ -757,22 +805,25 @@
             </div>
         </div>
 
-        <!-- 📱【手機版專屬：書頁外面下方的雙楕圓功能按鈕區】 -->
+        <!-- 📱【手機版雙按鈕區】 -->
         <div class="mobile-action-group" id="mobileActionGroup">
-            <!-- 金底黑字橢圓 -->
             <button type="button" class="mobile-action-btn btn-download-gold" onclick="saveAsImage(event)">下載答案</button>
-            <!-- 金邊黑底橢圓 -->
             <button type="button" class="mobile-action-btn btn-share-black" onclick="shareAnswer(event)">分享答案</button>
         </div>
 
     </div>
 
-    <!-- 💻【電腦版：右下角懸浮下載按鈕】 -->
-    <div class="share-fab" id="shareBtn" onclick="saveAsImage(event)" title="儲存解答圖片分享">
+    <!-- 💻【電腦版功能按鈕 - 下載】 -->
+    <div class="desktop-fab download-fab" id="downloadBtn" onclick="saveAsImage(event)" title="儲存解答圖片">
         <svg viewBox="0 0 24 24">
             <path d="M12 3v13M19 10l-7 7-7-7" />
             <path d="M4 21h16" />
         </svg>
+    </div>
+
+    <!-- 💻【電腦版功能按鈕 - 分享】🚀 換成 100% 擬真右轉彎分享箭頭樣式 -->
+    <div class="desktop-fab share-fab" id="shareBtn" onclick="shareAnswer(event)" title="分享解答文字">
+        <div class="share-icon-curved"></div>
     </div>
 
     <!-- 【懸浮回饋按鈕】 -->
@@ -782,7 +833,7 @@
         </svg>
     </div>
 
-    <!-- 【彈出式回饋輸入視窗】 -->
+    <!-- 【彈出式回饋視窗】 -->
     <div class="feedback-modal" id="feedbackModal" onclick="closeFeedback()">
         <form class="feedback-card" action="https://formspree.io/f/xlgyvlvo" method="POST" id="formspreeForm" onclick="event.stopPropagation()">
             <button type="button" class="close-modal-btn" onclick="closeFeedback()">×</button>
@@ -796,7 +847,7 @@
         </form>
     </div>
 
-    <!-- 【自訂網頁原生提示窗】 -->
+    <!-- 【自訂提示窗】 -->
     <div class="feedback-modal" id="customAlertModal" onclick="closeCustomAlert()">
         <div class="feedback-card custom-alert-card" onclick="event.stopPropagation()">
             <h3 id="customAlertTitle">提示</h3>
@@ -814,21 +865,17 @@
             const sound = document.getElementById('flipSound');
             if (sound) {
                 sound.currentTime = 0; 
-                sound.play().catch(err => {
-                    console.log("音效播放被瀏覽器阻擋:", err);
-                });
+                sound.play().catch(err => console.log("音效阻擋:", err));
             }
         }
 
-        // 下載答案圖片功能
         function saveAsImage(e) {
-            e.stopPropagation(); // 阻止事件冒泡，防蓋書
-            
+            e.stopPropagation(); 
             const innerPage = document.getElementById('innerPage');
-            const shareBtn = document.getElementById('shareBtn');
-            const originalTitle = shareBtn.getAttribute('title');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const originalTitle = downloadBtn.getAttribute('title');
             
-            shareBtn.setAttribute('title', '產生圖片中...');
+            downloadBtn.setAttribute('title', '產生圖片中...');
             innerPage.classList.add('snapshot-mode');
 
             html2canvas(innerPage, {
@@ -837,14 +884,12 @@
                 backgroundColor: "#fbf9f1" 
             }).then(canvas => {
                 innerPage.classList.remove('snapshot-mode');
-
                 const image = canvas.toDataURL("image/png");
                 const link = document.createElement('a');
                 link.download = `解答之書-${new Date().toLocaleDateString()}.png`;
                 link.href = image;
                 link.click();
-                
-                shareBtn.setAttribute('title', originalTitle);
+                downloadBtn.setAttribute('title', originalTitle);
             }).catch(err => {
                 innerPage.classList.remove('snapshot-mode');
                 console.error("製圖失敗:", err);
@@ -852,33 +897,22 @@
             });
         }
 
-        // 📱 手機版：分享答案功能
         function shareAnswer(e) {
-            e.stopPropagation(); // 阻止事件冒泡
-            
+            e.stopPropagation(); 
             const chText = document.getElementById('chText').textContent;
             const engText = document.getElementById('engText').textContent;
-            
             if (!chText || chText === "載入中...") return;
 
-            // 如果手機瀏覽器支援原生分享 API
             if (navigator.share) {
                 navigator.share({
                     title: '解答之書',
                     text: `我在【解答之書】得到了這個答案：\n\n「${chText}」\n${engText}\n\n來追尋你的答案吧！`,
                     url: window.location.href
-                }).catch(err => {
-                    console.log("使用者取消分享或失敗:", err);
-                });
+                }).catch(err => console.log("使用者取消分享:", err));
             } else {
-                // 不支援時的貼心降級處理 (如部分 LINE/FB 內建瀏覽器)
-                navigator.clipboard.writeText(`我在【解答之書】得到了這個答案：\n\n「${chText}」\n${engText}`)
-                .then(() => {
-                    showCustomAlert("連結已複製", "已複製文字解答！您可以直接貼上分享給好友，或直接使用「下載答案」儲存精美圖片唷！");
-                })
-                .catch(() => {
-                    showCustomAlert("提示", "建議直接點擊左側「下載答案」按鈕，即可儲存最精美的解答書頁圖片並分享囉！");
-                });
+                navigator.clipboard.writeText(`我在【解答之書】得到了這個答案：\n\n「${chText}」\n${engText}\n\n網址：${window.location.href}`)
+                .then(() => showCustomAlert("連結與答案已複製", "已複製文字解答與網站連結！您可以直接貼上分享給好友唷！"))
+                .catch(() => showCustomAlert("提示", "建議直接點擊「下載答案」儲存最精美的解答書頁圖片分享！"));
             }
         }
 
@@ -892,11 +926,12 @@
             document.getElementById('feedbackModal').classList.remove('active');
         }
 
-        function showCustomAlert(title, text) {
+        define = function(title, text) {
             document.getElementById('customAlertTitle').textContent = title;
             document.getElementById('customAlertText').textContent = text;
             document.getElementById('customAlertModal').classList.add('active');
         }
+        window.showCustomAlert = define;
 
         function closeCustomAlert() {
             document.getElementById('customAlertModal').classList.remove('active');
@@ -906,9 +941,7 @@
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault(); 
                 const form = document.getElementById('formspreeForm');
-                if (form.reportValidity()) {
-                    form.dispatchEvent(new Event('submit'));
-                }
+                if (form.reportValidity()) form.dispatchEvent(new Event('submit'));
             }
         }
 
@@ -917,10 +950,9 @@
             const form = this;
             const messageInput = document.getElementById('feedbackMessage');
             const btn = document.getElementById('submitBtn');
-            
             const now = new Date();
-            document.getElementById('feedbackTime').value = now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
             
+            document.getElementById('feedbackTime').value = now.toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
             btn.disabled = true;
             btn.textContent = "傳送中...";
             
@@ -970,6 +1002,7 @@
             const frontCover = document.getElementById('frontCover');
             const innerPage = document.getElementById('innerPage');
             const answerBox = document.getElementById('answerBox');
+            const downloadBtn = document.getElementById('downloadBtn');
             const shareBtn = document.getElementById('shareBtn');
             const mobileActionGroup = document.getElementById('mobileActionGroup');
 
@@ -979,67 +1012,56 @@
                 await loadAllAnswers();
             }
 
-            playFlipSound();
-
             if (!isOpen) {
-                if (chTruths.length > 0 && engTruths.length > 0) {
-                    const minLength = Math.min(chTruths.length, engTruths.length);
-                    const randomIndex = Math.floor(Math.random() * minLength);
-                    document.getElementById('engText').textContent = engTruths[randomIndex];
-                    document.getElementById('chText').textContent = chTruths[randomIndex];
-                }
+                playFlipSound();
+                
+                const randomIndex = Math.floor(Math.random() * chTruths.length);
+                document.getElementById('chText').textContent = chTruths[randomIndex] || "命運尚未決定";
+                document.getElementById('engText').textContent = engTruths[randomIndex] || "DESTINY UNKNOWN";
 
-                if (isMobile) {
-                    innerPage.classList.add('mobile-active');
-                    answerPageShowLogic();
-                } else {
-                    book.classList.add('open-book');
+                if (!isMobile) {
                     frontCover.classList.add('flipped');
-                    setTimeout(() => { answerPageShowLogic(); }, 300);
+                    setTimeout(() => {
+                        answerBox.classList.add('show-text');
+                        downloadBtn.classList.add('active');
+                        shareBtn.classList.add('active');
+                    }, 400);
+                } else {
+                    innerPage.classList.add('mobile-active');
+                    answerBox.classList.add('show-text');
+                    mobileActionGroup.classList.add('active');
                 }
                 isOpen = true;
             } else {
-                shareBtn.classList.remove('active');
-                if (isMobile) mobileActionGroup.classList.remove('active');
-
-                if (isMobile) {
-                    answerBox.classList.remove('show-text');
-                    innerPage.classList.remove('mobile-active');
+                playFlipSound();
+                answerBox.classList.remove('show-text');
+                
+                if (!isMobile) {
+                    downloadBtn.classList.remove('active');
+                    shareBtn.classList.remove('active');
+                    frontCover.classList.remove('flipped');
                 } else {
-                    answerBox.classList.remove('show-text');
-                    setTimeout(() => {
-                        frontCover.classList.remove('flipped');
-                        book.classList.remove('open-book');
-                    }, 100);
+                    mobileActionGroup.classList.remove('active');
+                    innerPage.classList.remove('mobile-active');
                 }
                 isOpen = false;
             }
-
-            function answerPageShowLogic() {
-                answerBox.classList.add('show-text');
-                if (!isMobile) {
-                    shareBtn.classList.add('active'); 
-                } else {
-                    // 手機版：內頁文字浮現時，下方的功能按鈕組同步浮現
-                    mobileActionGroup.classList.add('active');
-                }
-            }
         }
 
+        // 🚀 監聽鍵盤事件：按下空白鍵（Spacebar）時翻書/關書
         window.addEventListener('keydown', function(e) {
-            if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') {
+            // 如果使用者目前正在回饋卡片框裡打字，不觸發翻頁功能
+            if (document.activeElement.tagName === 'TEXTAREA' || document.activeElement.tagName === 'INPUT') {
                 return;
             }
-            if (e.key === ' ' || e.key === 'Spacebar' || e.code === 'Space' || e.keyCode === 32) {
-                e.preventDefault(); 
+            
+            if (e.key === ' ' || e.code === 'Space') {
+                e.preventDefault(); // 防止空白鍵預設的滾動網頁行為
                 toggleBook();
             }
         });
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadAllAnswers();
-            document.body.focus();
-        });
+        window.addEventListener('DOMContentLoaded', loadAllAnswers);
     </script>
 </body>
 </html>
