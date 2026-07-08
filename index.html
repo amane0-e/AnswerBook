@@ -32,6 +32,16 @@
             font-family: 'Noto Serif TC', serif;
         }
 
+        /* 主包裝容器：負責在手機版將書本與下方的按鈕垂直排列 */
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
         /* 3D 場景容器 */
         .scene {
             width: 600px; 
@@ -178,7 +188,6 @@
             z-index: 5;
             transform: rotateY(0deg);
             display: flex;
-            flex-direction: column; /* 讓內文與下方內嵌按鈕垂直排列 */
             justify-content: center;
             align-items: center; 
             padding: 35px; 
@@ -195,11 +204,6 @@
             border-radius: 14px !important; 
             margin-left: 0 !important;
             width: 100% !important;
-        }
-
-        /* 手機截圖時要把內嵌的「下載答案」按鈕藏起來，以免被印在圖片中 */
-        .inner-page-stay.snapshot-mode .mobile-inline-download-btn {
-            display: none !important;
         }
 
         /* 內頁古典細邊框設計 */
@@ -281,33 +285,71 @@
             font-weight: 600;
         }
 
-        /* 📱手機行動版專屬：內嵌於書頁底部的金色橢圓按鈕（預設不顯示，僅在手機尺寸啟用） */
-        .mobile-inline-download-btn {
+        .show-text {
+            opacity: 1;
+        }
+
+        /* 📱手機行動版專屬：位於書頁外部下方的雙按鈕控制區（預設隱藏，僅在手機尺寸且翻開時動態出現） */
+        .mobile-action-group {
             display: none;
-            background-color: #BDA369;
-            color: #1c1c1c;
-            border: none;
-            padding: 8px 24px;
-            border-radius: 50px; /* 完美橢圓 */
+            width: 88vw;
+            max-width: 380px;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 100;
+        }
+
+        .mobile-action-group.active {
+            display: flex !important;
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* 共同按鈕基礎樣式：兩顆等寬、等高、完美橢圓 */
+        .mobile-action-btn {
+            flex: 1;
+            height: 44px;
+            border-radius: 50px; 
             font-family: 'Noto Serif TC', serif;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             letter-spacing: 2px;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(189, 163, 105, 0.3);
-            margin-top: 30px;
-            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             transition: all 0.2s ease;
             -webkit-appearance: none;
+            border: none;
+        }
+
+        /* 1. 金底黑字橢圓按鈕（下載答案） */
+        .btn-download-gold {
+            background-color: #BDA369;
+            color: #111111;
+            box-shadow: 0 4px 12px rgba(189, 163, 105, 0.25);
         }
         
-        .mobile-inline-download-btn:active {
+        .btn-download-gold:active {
             transform: scale(0.96);
             background-color: #a8905b;
         }
 
-        .show-text {
-            opacity: 1;
+        /* 2. 金邊黑色橢圓按鈕（分享答案） */
+        .btn-share-black {
+            background-color: #1c1c1c;
+            color: #BDA369;
+            border: 1.5px solid #BDA369;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-share-black:active {
+            transform: scale(0.96);
+            background-color: #2b2b2b;
         }
 
         /* ==================== 3. 封底 ==================== */
@@ -558,7 +600,7 @@
                 width: 88vw !important; 
                 max-width: 380px !important; 
                 height: auto !important;
-                max-height: 65dvh !important; 
+                max-height: 60dvh !important; /* 壓縮高度保留空間給下方按鈕組 */
                 aspect-ratio: 4 / 5 !important; 
                 margin: 0 !important; 
                 position: relative !important;
@@ -621,11 +663,6 @@
                 transition: opacity 0.3s ease;
             }
 
-            /* 手機啟用內嵌的金色下載按鈕 */
-            .mobile-inline-download-btn {
-                display: block !important;
-            }
-
             /* 手機截圖同步移除陰影 */
             .inner-page-stay.snapshot-mode {
                 box-shadow: none !important;
@@ -681,45 +718,56 @@
     <!-- 隱藏的音效播放器 -->
     <audio id="flipSound" src="flip.mp3" preload="auto"></audio>
 
-    <div class="scene">
-        <div class="book" id="magicBook" onclick="toggleBook()">
-            
-            <!-- 【1. 封面外殼】 -->
-            <div class="page-component cover-wrapper" id="frontCover">
-                <div class="cover-front">
-                    <div class="gold-pattern"></div>
-                    <div class="book-title-container">
-                        <div class="book-title-area">
-                            <div class="book-title">解答之書</div>
-                            <div class="book-subtitle">THE BOOK OF ANSWERS</div>
+    <!-- 【主包裝容器】 -->
+    <div class="main-wrapper">
+        
+        <!-- 【3D 書本場景】 -->
+        <div class="scene">
+            <div class="book" id="magicBook" onclick="toggleBook()">
+                
+                <!-- 【1. 封面外殼】 -->
+                <div class="page-component cover-wrapper" id="frontCover">
+                    <div class="cover-front">
+                        <div class="gold-pattern"></div>
+                        <div class="book-title-container">
+                            <div class="book-title-area">
+                                <div class="book-title">解答之書</div>
+                                <div class="book-subtitle">THE BOOK OF ANSWERS</div>
+                            </div>
                         </div>
                     </div>
+                    <div class="cover-back-side"></div>
                 </div>
-                <div class="cover-back-side"></div>
-            </div>
 
-            <!-- 【2. 空白內頁】 -->
-            <div class="page-component inner-page-stay" id="innerPage">
-                <!-- 答案內文區 -->
-                <div class="answer-container" id="answerBox">
-                    <div class="eng-text" id="engText"></div>
-                    <div class="decor-line">
-                        <div class="decor-diamond"></div>
+                <!-- 【2. 空白內頁】 -->
+                <div class="page-component inner-page-stay" id="innerPage">
+                    <!-- 答案內文區 -->
+                    <div class="answer-container" id="answerBox">
+                        <div class="eng-text" id="engText"></div>
+                        <div class="decor-line">
+                            <div class="decor-diamond"></div>
+                        </div>
+                        <div class="ch-text" id="chText">載入中...</div>
                     </div>
-                    <div class="ch-text" id="chText">載入中...</div>
                 </div>
 
-                <!-- 📱手機專屬：內嵌於書頁下方的金色橢圓按鈕（點擊時阻止冒泡，避免點到按鈕反而把書蓋上） -->
-                <button type="button" class="mobile-inline-download-btn" onclick="saveAsImage(event)">下載答案</button>
+                <!-- 【3. 封底】 -->
+                <div class="page-component cover-back"></div>
+
             </div>
-
-            <!-- 【3. 封底】 -->
-            <div class="page-component cover-back"></div>
-
         </div>
+
+        <!-- 📱【手機版專屬：書頁外面下方的雙楕圓功能按鈕區】 -->
+        <div class="mobile-action-group" id="mobileActionGroup">
+            <!-- 金底黑字橢圓 -->
+            <button type="button" class="mobile-action-btn btn-download-gold" onclick="saveAsImage(event)">下載答案</button>
+            <!-- 金邊黑底橢圓 -->
+            <button type="button" class="mobile-action-btn btn-share-black" onclick="shareAnswer(event)">分享答案</button>
+        </div>
+
     </div>
 
-    <!-- 💻【電腦版：右下角懸浮下載按鈕】（在手機版會被 CSS 自動隱藏） -->
+    <!-- 💻【電腦版：右下角懸浮下載按鈕】 -->
     <div class="share-fab" id="shareBtn" onclick="saveAsImage(event)" title="儲存解答圖片分享">
         <svg viewBox="0 0 24 24">
             <path d="M12 3v13M19 10l-7 7-7-7" />
@@ -727,7 +775,7 @@
         </svg>
     </div>
 
-    <!-- 【懸浮回饋按鈕】信箱圖示 -->
+    <!-- 【懸浮回饋按鈕】 -->
     <div class="feedback-fab" onclick="openFeedback(event)" title="回饋意見">
         <svg viewBox="0 0 24 24">
             <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
@@ -772,15 +820,15 @@
             }
         }
 
+        // 下載答案圖片功能
         function saveAsImage(e) {
-            e.stopPropagation(); // 🚀 關鍵：防止事件冒泡回傳給 .book，避免點按鈕時書本被關閉
+            e.stopPropagation(); // 阻止事件冒泡，防蓋書
             
             const innerPage = document.getElementById('innerPage');
             const shareBtn = document.getElementById('shareBtn');
-            
             const originalTitle = shareBtn.getAttribute('title');
+            
             shareBtn.setAttribute('title', '產生圖片中...');
-
             innerPage.classList.add('snapshot-mode');
 
             html2canvas(innerPage, {
@@ -791,7 +839,6 @@
                 innerPage.classList.remove('snapshot-mode');
 
                 const image = canvas.toDataURL("image/png");
-                
                 const link = document.createElement('a');
                 link.download = `解答之書-${new Date().toLocaleDateString()}.png`;
                 link.href = image;
@@ -803,6 +850,36 @@
                 console.error("製圖失敗:", err);
                 showCustomAlert("提示", "圖片儲存失敗，請再試一次。");
             });
+        }
+
+        // 📱 手機版：分享答案功能
+        function shareAnswer(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            
+            const chText = document.getElementById('chText').textContent;
+            const engText = document.getElementById('engText').textContent;
+            
+            if (!chText || chText === "載入中...") return;
+
+            // 如果手機瀏覽器支援原生分享 API
+            if (navigator.share) {
+                navigator.share({
+                    title: '解答之書',
+                    text: `我在【解答之書】得到了這個答案：\n\n「${chText}」\n${engText}\n\n來追尋你的答案吧！`,
+                    url: window.location.href
+                }).catch(err => {
+                    console.log("使用者取消分享或失敗:", err);
+                });
+            } else {
+                // 不支援時的貼心降級處理 (如部分 LINE/FB 內建瀏覽器)
+                navigator.clipboard.writeText(`我在【解答之書】得到了這個答案：\n\n「${chText}」\n${engText}`)
+                .then(() => {
+                    showCustomAlert("連結已複製", "已複製文字解答！您可以直接貼上分享給好友，或直接使用「下載答案」儲存精美圖片唷！");
+                })
+                .catch(() => {
+                    showCustomAlert("提示", "建議直接點擊左側「下載答案」按鈕，即可儲存最精美的解答書頁圖片並分享囉！");
+                });
+            }
         }
 
         function openFeedback(e) {
@@ -894,6 +971,7 @@
             const innerPage = document.getElementById('innerPage');
             const answerBox = document.getElementById('answerBox');
             const shareBtn = document.getElementById('shareBtn');
+            const mobileActionGroup = document.getElementById('mobileActionGroup');
 
             const isMobile = window.innerWidth <= 600;
 
@@ -922,6 +1000,7 @@
                 isOpen = true;
             } else {
                 shareBtn.classList.remove('active');
+                if (isMobile) mobileActionGroup.classList.remove('active');
 
                 if (isMobile) {
                     answerBox.classList.remove('show-text');
@@ -940,6 +1019,9 @@
                 answerBox.classList.add('show-text');
                 if (!isMobile) {
                     shareBtn.classList.add('active'); 
+                } else {
+                    // 手機版：內頁文字浮現時，下方的功能按鈕組同步浮現
+                    mobileActionGroup.classList.add('active');
                 }
             }
         }
