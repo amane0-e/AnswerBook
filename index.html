@@ -42,7 +42,17 @@
             --toggle-text: #fff;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        /* 🚀 擴充全域防反白選取：包含所有瀏覽器與行動端的相容前綴 */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+            -webkit-user-select: none; /* Safari, Chrome, Opera, iOS, Android */
+            -moz-user-select: none;    /* Firefox */
+            -ms-user-select: none;     /* Internet Explorer/Edge */
+            user-select: none;         /* 標準網頁排版 */
+            -webkit-touch-callout: none; /* 停用 iOS 長按彈出選單 */
+        }
 
         body {
             background: radial-gradient(circle, #3a4148 0%, #22272c 100%);
@@ -134,7 +144,7 @@
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        /* 🚀 桌機版優化：完全移除變色 transition，切換時瞬間換膚，絕不慢半拍 */
+        /* 書皮與書脊變色設定 */
         .cover-front {
             position: absolute; width: 100%; height: 100%;
             background: var(--cover-bg-front);
@@ -192,7 +202,7 @@
         .inner-page-stay.snapshot-mode { background-image: none !important; box-shadow: none !important; border-radius: 14px !important; margin-left: 0 !important; width: 100% !important; }
         .inner-page-stay::before { content: ''; position: absolute; top: 25px; bottom: 25px; left: 25px; right: 25px; border: 1px solid rgba(59, 49, 33, 0.25); outline: 3px double rgba(59, 49, 33, 0.4); outline-offset: -8px; border-radius: 4px; pointer-events: none; }
         
-        .answer-container { display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 80%; gap: 20px; opacity: 0; transition: opacity 0.4s ease-in-out; user-select: none; z-index: 6; }
+        .answer-container { display: flex; flex-direction: column; align-items: center; justify-content: center; max-width: 80%; gap: 20px; opacity: 0; transition: opacity 0.4s ease-in-out; z-index: 6; }
         .eng-text { color: #3b3121; font-size: 1.25rem; line-height: 1.6; letter-spacing: 2px; text-align: center; font-weight: 400; text-transform: uppercase; }
         .decor-line { display: flex; align-items: center; justify-content: center; width: 140px; height: 20px; color: rgba(59, 49, 33, 0.6); position: relative; }
         .decor-line::before, .decor-line::after { content: ''; flex: 1; height: 1px; background: linear-gradient(to var(--direction, right), rgba(59, 49, 33, 0.5), rgba(59, 49, 33, 0)); }
